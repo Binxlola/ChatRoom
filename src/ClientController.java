@@ -42,7 +42,26 @@ public class ClientController extends JFrame {
         return _controller;
     }
 
+    /**
+     * Creates a participant box with required details and adds this to the participants view
+     * @param name The name of the participant
+     */
+    private void addParticipant(String name) {
+
+    }
+
+    private void test() {}
+
     public void displayMessage(String message) {
+        Message messageObj = new Message(message);
+
+        switch (messageObj.getType()) {
+            // If the user is connecting, then they need to be added to the participants list
+            case CONNECT: this.addParticipant(messageObj.getName());this.test();break;
+            case MESSAGE: this.test();break;
+        }
+
+        //#TODO This needs to be taken out and have it's own method created to deal with this functionality
         JPanel messagePanel = this.view.getMessages();
         JLabel test = new JLabel(message);
         test.setSize(25,25);

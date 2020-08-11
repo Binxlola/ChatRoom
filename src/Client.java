@@ -11,6 +11,7 @@ public class Client {
     // User details
     private ImageIcon profileImg;
     private int ID;
+    private String userName;
 
     /**
      * Creates the client side socket and starts a client thread which handles the communication between the server and
@@ -21,7 +22,10 @@ public class Client {
             Socket socket = new Socket(HOST_NAME, HOST_PORT); // Client side socket
             this.listener = new Listener(socket, this);
             listener.start();
-//            this.keyboardListen();
+
+            // Send setup data for connecting client
+            String connectMessage = Message.createStringForServer(Message.MessageType.CONNECT, this, null);
+            listener.sendToServer(connectMessage);
         } catch (IOException e) {
             System.err.println("Client could not make connection: " + e);
             System.exit(-1);
@@ -29,5 +33,6 @@ public class Client {
     }
 
     public Listener getListener() {return this.listener;}
-//    }
+    public String getUserName() {return this.userName;}
+    public int getID() {return  this.ID;}
 }
