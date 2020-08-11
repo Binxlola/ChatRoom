@@ -23,6 +23,7 @@ public class ButtonHandler implements ActionListener {
             case "SEND": this.send();break;
             case "PROFILE": this.profile();break;
             case "PARTICIPANTS": this.participants();break;
+            case "MESSAGE_OPTIONS": this.messageOptions();break;
         }
 
     }
@@ -40,6 +41,14 @@ public class ButtonHandler implements ActionListener {
 
     }
 
+    private void messageOptions() {
+        //#TODO might put this component in the view (leave here for now)
+        JFileChooser selector = new JFileChooser();
+    }
+
+    /**
+     * Controls the flow for opening and closing the participants view
+     */
     private void participants() {
          boolean isOpen = this._controller.isParticipantsOpen();
         if(!isOpen) {

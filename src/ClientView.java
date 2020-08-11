@@ -65,6 +65,7 @@ public class ClientView extends JPanel {
         messageOptions.setOpaque(false);
         messageOptions.setContentAreaFilled(false);
         messageOptions.setBorderPainted(false);
+        messageOptions.setName("MESSAGE_OPTIONS");
         add(messageOptions);
 
         messageArea = new JTextArea();
