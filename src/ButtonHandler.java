@@ -49,6 +49,9 @@ public class ButtonHandler implements ActionListener {
         }
     }
 
+    /**
+     * Will open the participants view of the application
+     */
     private void openParticipants() {
         JPanel participantsDisplay = this.VIEW.getParticipants();
 
@@ -70,6 +73,9 @@ public class ButtonHandler implements ActionListener {
         this.VIEW.repaint();
     }
 
+    /**
+     * Will close the participants view of the application
+     */
     private void closeParticipants() {
         JPanel participantsDisplay = this.VIEW.getParticipants();
 

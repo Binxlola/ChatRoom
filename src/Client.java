@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -6,6 +7,10 @@ public class Client {
     public static final String HOST_NAME = "localhost";
     public static final int HOST_PORT = 7777;
     private Listener listener;
+
+    // User details
+    private ImageIcon profileImg;
+    private int ID;
 
     /**
      * Creates the client side socket and starts a client thread which handles the communication between the server and
