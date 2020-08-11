@@ -16,7 +16,23 @@ public class Message implements Serializable {
      */
     public Message(String message) {
         String[] typeAndMessage = message.split("=");
-        MessageType type = MessageType.valueOf(typeAndMessage[0]);
+        this.type = MessageType.valueOf(typeAndMessage[0]);
+
+        // Loop through each part of the data section of the string
+        for(String part : typeAndMessage[1].split(",")) {
+
+            // Split the part of data for it's type and data
+            String[] partSplit = part.split(":");
+            String data = partSplit[1];
+
+            // Assign parts of data string to corresponding variable
+            switch (partSplit[0]) {
+                case "USERNAME": this.name = data;break;
+                case "ID": this.ID = Integer.parseInt(data);break;
+                case "MESSAGE": this.message = data;break;
+
+            }
+        }
     }
 
     /**
@@ -39,7 +55,8 @@ public class Message implements Serializable {
                 messageToSend = String.format("%s=USERNAME:%s, ID:%s, MESSAGE:%s", type,
                         client.getUserName(),client.getID(),message);
                 break;
-            case FILE: break;
+            case FILE: //#TODO setup the file case
+                break;
         }
 
         return messageToSend;
@@ -47,6 +64,7 @@ public class Message implements Serializable {
 
     public MessageType getType() {return this.type;}
     public String getName() {return this.name;}
+    public String getMessage() {return this.message;}
 
     public enum MessageType {
         CONNECT, FILE, MESSAGE

@@ -50,7 +50,9 @@ public class ClientController extends JFrame {
 
     }
 
-    private void test() {}
+    private void test() {
+        //TODO this is where the message layout can be setup
+    }
 
     public void displayMessage(String message) {
         Message messageObj = new Message(message);
