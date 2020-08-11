@@ -43,6 +43,7 @@ public class Listener extends Thread {
      * @param message The message being sent to the server
      */
     public void sendToServer(String message) {
+        System.out.println(message);
         this.writer.println(message);
     }
 

@@ -1,6 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public class ButtonHandler implements ActionListener {
 
@@ -19,6 +22,7 @@ public class ButtonHandler implements ActionListener {
 
         System.out.println(e);
 
+        // Checks which method to call to handle the event
         switch(name) {
             case "SEND": this.send();break;
             case "PROFILE": this.profile();break;
@@ -28,6 +32,9 @@ public class ButtonHandler implements ActionListener {
 
     }
 
+    /**
+     * Gets any text that is in the user text input area, will then send the text to all other clients via the server
+     */
     private void send() {
         JTextArea messageArea = this.VIEW.getMessageArea();
         String message = messageArea.getText();
@@ -37,13 +44,43 @@ public class ButtonHandler implements ActionListener {
         }
     }
 
+    /**
+     * Opens a file selector for the user to select a file. If the user selects a compatible file an image icon
+     * will be created and set as the new client profile image and profile button icon
+     */
     private void profile() {
+        File selectedFile = this.selectFile();
+
+        try {
+            if(!(ImageIO.read(selectedFile) == null)) {
+                this._controller.setNewProfileImg(new ImageIcon(selectedFile.getPath()));
+                this.repaint();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
+    /**
+     * Handles additional features such as file upload, emojis and others alike
+     */
     private void messageOptions() {
-        //#TODO might put this component in the view (leave here for now)
-        JFileChooser selector = new JFileChooser();
+        //#TODO change to a multi-function handler (Currently used for file upload)
+        File selectedFile = this.selectFile();
+    }
+
+    /**
+     * Opens the dialog to select a file, once a file has been select it will be returned.
+     * @return The user selected file
+     */
+    private File selectFile() {
+        JFileChooser fileChooser = this.VIEW.getFileChooser();
+        File selectedFile = null;
+        int selected = fileChooser.showOpenDialog(this.VIEW);
+
+        if(selected == JFileChooser.APPROVE_OPTION) { selectedFile = fileChooser.getSelectedFile();}
+        return selectedFile;
     }
 
     /**
@@ -78,8 +115,7 @@ public class ButtonHandler implements ActionListener {
         this._controller.setParticipantsOpen(true);
 
         // Repaint components to display new changes
-        this._controller.repaint();
-        this.VIEW.repaint();
+        this.repaint();
     }
 
     /**
@@ -101,6 +137,14 @@ public class ButtonHandler implements ActionListener {
         this._controller.setParticipantsOpen(false);
 
         // Repaint components to display new changes
+        this._controller.repaint();
+        this.VIEW.repaint();
+    }
+
+    /**
+     * Repaints the view and controller to display any visual changes
+     */
+    private void repaint() {
         this._controller.repaint();
         this.VIEW.repaint();
     }

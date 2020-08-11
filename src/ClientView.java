@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class ClientView extends JPanel {
 
@@ -7,9 +8,10 @@ public class ClientView extends JPanel {
 
     // GUI Components below
     private final JTextArea messageArea;
-    private final JButton sendBtn, messageOptions, participantsBtn, profile;
+    private final JButton sendBtn, messageOptions, participantsBtn, profileBtn;
     private final JScrollPane messageWindow;
     private final JPanel messages, participants;
+    private final JFileChooser fileChooser;
 
     public ClientView(Client model) {
 
@@ -19,15 +21,15 @@ public class ClientView extends JPanel {
         setLayout(null);
 
         // Setup menu buttons
-        profile = new JButton(new ImageIcon("src\\user.png"));
-        profile.setSize(24,24);
-        profile.setLocation(510, 10);
-        profile.setBorder(BorderFactory.createEmptyBorder());
-        profile.setOpaque(false);
-        profile.setContentAreaFilled(false);
-        profile.setBorderPainted(false);
-        profile.setName("PROFILE");
-        add(profile);
+        profileBtn = new JButton(new ImageIcon("src\\user.png"));
+        profileBtn.setSize(24,24);
+        profileBtn.setLocation(510, 10);
+        profileBtn.setBorder(BorderFactory.createEmptyBorder());
+        profileBtn.setOpaque(false);
+        profileBtn.setContentAreaFilled(false);
+        profileBtn.setBorderPainted(false);
+        profileBtn.setName("PROFILE");
+        add(profileBtn);
 
         participantsBtn = new JButton(new ImageIcon("src\\team.png"));
         participantsBtn.setSize(24,24);
@@ -90,7 +92,9 @@ public class ClientView extends JPanel {
         participants.setLocation(560, 10);
         participants.setBackground(Color.RED);
 
-
+        // Setup file chooser for file upload
+        fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home"))); // set to home dir
 
 
 
@@ -107,17 +111,17 @@ public class ClientView extends JPanel {
         setSize(560, 1000);
     }
 
-    public void update() {
-        this.messageWindow.repaint();
-        this.repaint();
+    private void setupMenuBtns() {
+
     }
 
+    // Getters and Setters
     public JPanel getMessages() {return this.messages;}
     public JPanel getParticipants() {return this.participants;}
     public JTextArea getMessageArea() {return this.messageArea;}
-
-    public JButton getProfile() {return this.profile;}
+    public JFileChooser getFileChooser() {return this.fileChooser;}
+    public JButton getProfile() {return this.profileBtn;}
     public JButton getParticipantsBtn() {return this.participantsBtn;}
     public JButton getSendBtn() {return this.sendBtn;}
-    public JButton messageOptions() {return this.messageOptions;}
+    public JButton getMessageOptions() {return this.messageOptions;}
 }

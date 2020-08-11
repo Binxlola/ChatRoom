@@ -1,4 +1,12 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Base64;
 
 public class Message implements Serializable {
 
@@ -16,6 +24,7 @@ public class Message implements Serializable {
      */
     public Message(String message) {
         String[] typeAndMessage = message.split("=");
+        System.out.println(message);;
         this.type = MessageType.valueOf(typeAndMessage[0]);
 
         // Loop through each part of the data section of the string
@@ -30,6 +39,7 @@ public class Message implements Serializable {
                 case "USERNAME": this.name = data;break;
                 case "ID": this.ID = Integer.parseInt(data);break;
                 case "MESSAGE": this.message = data;break;
+                case "ICON": this.ImageIcon = data;break;
 
             }
         }
@@ -48,8 +58,8 @@ public class Message implements Serializable {
 
         switch (type) {
             case CONNECT:
-                messageToSend = String.format("%s=USERNAME:%s, ID:%s",
-                        type,client.getUserName(),client.getID());
+                messageToSend = String.format("%s=USERNAME:%s, ID:%s, ICON:%s",
+                        type,client.getUserName(),client.getID(),convertIconToString(client.getProfileImg()));
                 break;
             case MESSAGE:
                 messageToSend = String.format("%s=USERNAME:%s, ID:%s, MESSAGE:%s", type,
@@ -60,6 +70,36 @@ public class Message implements Serializable {
         }
 
         return messageToSend;
+    }
+
+    private static String convertIconToString(javax.swing.ImageIcon image) {
+        BufferedImage img = new BufferedImage(image.getIconWidth(),image.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics g = img.createGraphics();
+
+        image.paintIcon(null, g,0,0);
+        g.dispose();
+
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(img, "jpg", b);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        byte[] imageInByte = b.toByteArray();
+
+        return Base64.getEncoder().encodeToString(imageInByte);
+    }
+
+    private ImageIcon convertStringToIcon(String encodedString) {
+        byte[] bytes = encodedString.getBytes();
+        try {
+            return new ImageIcon(ImageIO.read(new ByteArrayInputStream(bytes)));
+        } catch (IOException e) {
+            System.err.println("Error occurred converting string to Icon");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public MessageType getType() {return this.type;}
