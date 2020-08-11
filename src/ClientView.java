@@ -8,8 +8,8 @@ public class ClientView extends JPanel {
     // GUI Components below
     private final JTextArea messageArea;
     private final JButton sendBtn, messageOptions, participantsBtn, profile;
-    private JScrollPane messageWindow;
-    private JPanel messages, participants;
+    private final JScrollPane messageWindow;
+    private final JPanel messages, participants;
 
     public ClientView(Client model) {
 
@@ -85,8 +85,9 @@ public class ClientView extends JPanel {
         // Setup open/close elements
         participants = new JPanel();
         participants.setLayout(new GridLayout(1, 1, 0, 3));
-        participants.setSize(100, 900);
-        participants.setLocation(500, 10);
+        participants.setSize(230, 940);
+        participants.setLocation(560, 10);
+        participants.setBackground(Color.RED);
 
 
 

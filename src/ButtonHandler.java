@@ -41,13 +41,51 @@ public class ButtonHandler implements ActionListener {
     }
 
     private void participants() {
+         boolean isOpen = this._controller.isParticipantsOpen();
+        if(!isOpen) {
+            this.openParticipants();
+        } else {
+            this.closeParticipants();
+        }
+    }
+
+    private void openParticipants() {
         JPanel participantsDisplay = this.VIEW.getParticipants();
+
+        // Get required dimensions and compute new dimensions
         int mainWidth = this.VIEW.getWidth();
-        int secondaryWidth = participantsDisplay.getWidth() + 20;
+        int mainHeight = this.VIEW.getHeight();
+        int secondaryWidth = participantsDisplay.getWidth() + 50;
 
         // expand the main view
-        this.VIEW.setSize((mainWidth + secondaryWidth), this.VIEW.getHeight());
+        this.VIEW.setSize((mainWidth + secondaryWidth), mainHeight);
+        this._controller.setSize(this.VIEW.getWidth() + 1, this._controller.getHeight());
         this.VIEW.add(participantsDisplay);
+
+        // Tell controller this panel is open
+        this._controller.setParticipantsOpen(true);
+
+        // Repaint components to display new changes
+        this._controller.repaint();
+        this.VIEW.repaint();
+    }
+
+    private void closeParticipants() {
+        JPanel participantsDisplay = this.VIEW.getParticipants();
+
+        // Get required dimensions
+        int originalWidth = this._controller.getOriginalWidth();
+        int originalHeight = this._controller.getOriginalHeight();
+
+        // Set back to original size
+        this.VIEW.remove(participantsDisplay);
+        this.VIEW.setSize(originalWidth, originalHeight);
+        this._controller.setSize(originalWidth + 1, originalHeight + 1);
+
+        // Tell controller this panel is closed
+        this._controller.setParticipantsOpen(false);
+
+        // Repaint components to display new changes
         this._controller.repaint();
         this.VIEW.repaint();
     }

@@ -8,14 +8,21 @@ public class ClientController extends JFrame {
     private ClientView view = new ClientView(this.model);
     public static ClientController _controller = null;
 
+    private boolean participantsOpen = false;
+    private int originalWidth, originalHeight;
+
     private ClientController(String title) {
         super(title); //#TODO allow user to change title of their client window
 
+        // Setup the frame
         getContentPane().add(this.view);
-
-        setSize(this.view.getSize());
+        setSize(this.view.getWidth() + 1, this.view.getHeight() + 1);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Store view sizes for later use
+        this.originalHeight = this.view.getHeight();
+        this.originalWidth = this.view.getWidth();
 
         // Add all event handlers below
         ButtonHandler buttonHandler = new ButtonHandler(this, this.view);
@@ -43,6 +50,12 @@ public class ClientController extends JFrame {
         messagePanel.repaint();
     }
     public Listener getClientListener() {return this.model.getListener();}
+
+    public boolean isParticipantsOpen() {return this.participantsOpen;}
+    public void setParticipantsOpen(boolean open) {this.participantsOpen = open;}
+
+    public int getOriginalWidth() {return this.originalWidth;}
+    public int getOriginalHeight() {return  this.originalHeight;}
 
     public static void main(String[] args) {
         JFrame frame = ClientController.getController();
