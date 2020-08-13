@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Listener extends Thread {
 
@@ -43,7 +45,6 @@ public class Listener extends Thread {
      * @param message The message being sent to the server
      */
     public void sendToServer(String message) {
-        System.out.println(message);
         this.writer.println(message);
     }
 
@@ -65,6 +66,10 @@ public class Listener extends Thread {
         }
     }
 
+    public void serveToClient(String message) {
+        this.writer.println(message);
+    }
+
     @Override
     public void run() {
         try {
@@ -78,9 +83,11 @@ public class Listener extends Thread {
                 message = this.reader.readLine(); // Data has come through
 
                 if(this.SERVER != null) {
-                    this.serveToClients(message);
+//                    this.serveToClients(message);
+                    this.serverHandler(message);
                 } else if(this.CLIENT != null) {
                     this._controller.displayMessage(message);
+                    this.clientHandler(message);
                 }
             }
 
@@ -92,5 +99,40 @@ public class Listener extends Thread {
         } catch (IOException | InterruptedException e) {
             System.out.println("There was an error when listening for messages");
         }
+    }
+
+    private void serverHandler(String message) {
+        System.out.println("MESSAGE" + message);
+        Message msgObj = new Message(message);
+        Message.MessageType type  = msgObj.getType();
+
+        switch (type) {
+            case CONNECT:
+                HashMap<UUID,Object[]> participants = this.SERVER.getParticipants();
+
+                // If the user isn't already connected then we add them to the participant list
+                // After this we also send all connected participants and updated list as a String
+                if(!(participants.containsKey(msgObj.getID()))) {
+                    this.SERVER.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
+                    this.serveToClients(Message.generateParticipantsString(participants));
+                }
+                break;
+        }
+    }
+
+    private void clientHandler(String message) {
+        Message msgObj = new Message(message);
+        Message.MessageType type  = msgObj.getType();
+
+        switch (type) {
+            case CONNECT:
+                // If connection is from client other than local client, add to local participants map
+                if(msgObj.getID() != this.CLIENT.getID()) {
+                    this.CLIENT.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
+                }
+                break;
+        }
+
+
     }
 }

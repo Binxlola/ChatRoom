@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.*;
 
 public class Client extends Thread {
 
@@ -9,11 +10,18 @@ public class Client extends Thread {
     public static final String HOST_NAME = "localhost";
     public static final int HOST_PORT = 7777;
     private Listener listener;
+    private HashMap<UUID,Object[]> participants = new HashMap<UUID,Object[]>();
 
     // User details
     private ImageIcon profileImg = new ImageIcon("src\\user.png");
-    private int ID;
-    private String userName;
+    private final UUID ID;
+    private String userName = "TESTTEST";
+
+    private Client() {
+        // Local client is always a participant
+        this.ID = UUID.randomUUID();
+        this.addParticipant(this.ID, this.userName, this.profileImg);
+    }
 
     /**
      * If not Client object exists a new one will be create and returned. If one does exist then it will be returned
@@ -45,10 +53,16 @@ public class Client extends Thread {
         }
     }
 
+    public void addParticipant(UUID ID, String name, ImageIcon profileImg) {
+        Object[] temp = {name,profileImg};
+        this.participants.put(ID,temp);
+    }
+
     // Getters and Setters
     public Listener getListener() {return this.listener;}
     public String getUserName() {return this.userName;}
     public ImageIcon getProfileImg() {return this.profileImg;}
     public void setProfileImg(ImageIcon icon) {this.profileImg = icon;}
-    public int getID() {return  this.ID;}
+    public UUID getID() {return  this.ID;}
+    public HashMap<UUID,Object[]> getParticipants() {return this.participants;}
 }

@@ -1,8 +1,11 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 
 public class ChatServer {
@@ -10,6 +13,7 @@ public class ChatServer {
     public static final int PORT = 7777;
     private boolean stopRequested = false;
     private final ArrayList<Listener> connections = new ArrayList<Listener>();
+    private HashMap<UUID,Object[]> participants = new HashMap<UUID,Object[]>();
 
     public void startServer() {
         ServerSocket serverSocket = null;
@@ -36,7 +40,13 @@ public class ChatServer {
         }
     }
 
+    public void addParticipant(UUID ID, String name, ImageIcon profileImg) {
+        Object[] temp = {name,profileImg};
+        this.participants.put(ID,temp);
+    }
+
     public ArrayList<Listener> getServerConnections() {return this.connections;}
+    public HashMap<UUID,Object[]> getParticipants() {return this.participants;}
 
     public static void main(String[] args) {
         ChatServer server = new ChatServer();

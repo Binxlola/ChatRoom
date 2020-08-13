@@ -1,6 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 
 public class ClientView extends JPanel {
 
@@ -111,7 +115,59 @@ public class ClientView extends JPanel {
         setSize(560, 1000);
     }
 
-    private void setupMenuBtns() {
+    public void update() {
+
+    }
+
+    private void setupParticipants() {
+        Component[] components = this.participants.getComponents();
+        HashMap<UUID,Object[]> participants = this.model.getParticipants();
+        Iterator<Map.Entry<UUID,Object[]>> iterator = participants.entrySet().iterator();
+
+        if(components.length > 0) {
+            this.generateParticipantsList(iterator);
+        } else {
+            this.updateParticipantList(iterator);
+        }
+        this.participants.getComponents();
+    }
+
+    private void generateParticipantsList(Iterator<Map.Entry<UUID,Object[]>> participants) {
+        int y = 5;
+
+        while(participants.hasNext()) {
+            Map.Entry<UUID,Object[]> pair = participants.next();
+            Object[] details = pair.getValue();
+
+            // Main container
+            JPanel container = new JPanel();
+            container.setSize(220, 50);
+            container.setLocation(5,y);
+            container.setName(pair.getKey().toString());
+
+            // UserName
+            JLabel userName = new JLabel((String) details[0]);
+            userName.setLocation(0,0);
+            userName.setSize(150, 50);
+
+            // Profile Image
+            JLabel img = new JLabel();
+            img.setIcon((ImageIcon) details[1]);
+            img.setSize(50,50);
+            img.setLocation(150, 0);
+
+            // Add all the components
+            container.add(userName);
+            container.add(img);
+            add(container);
+
+            // Increase the y-axis placement value
+            y+= 5;
+
+        }
+    }
+
+    private void updateParticipantList(Iterator<Map.Entry<UUID,Object[]>> participants) {
 
     }
 

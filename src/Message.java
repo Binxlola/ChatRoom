@@ -6,15 +6,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Base64;
+import java.util.*;
 
 public class Message implements Serializable {
 
     private String status;
-    private int ID;
+    private UUID ID;
     private String name;
     private String message;
-    private String ImageIcon;
+    private ImageIcon ImageIcon;
     private byte[] data;
     private MessageType type;
 
@@ -24,7 +24,6 @@ public class Message implements Serializable {
      */
     public Message(String message) {
         String[] typeAndMessage = message.split("=");
-        System.out.println(message);;
         this.type = MessageType.valueOf(typeAndMessage[0]);
 
         // Loop through each part of the data section of the string
@@ -37,9 +36,9 @@ public class Message implements Serializable {
             // Assign parts of data string to corresponding variable
             switch (partSplit[0]) {
                 case "USERNAME": this.name = data;break;
-                case "ID": this.ID = Integer.parseInt(data);break;
+                case "ID": this.ID = UUID.fromString(data);break;
                 case "MESSAGE": this.message = data;break;
-                case "ICON": this.ImageIcon = data;break;
+                case "ICON": this.ImageIcon = this.convertStringToIcon(data);break;
 
             }
         }
@@ -58,11 +57,11 @@ public class Message implements Serializable {
 
         switch (type) {
             case CONNECT:
-                messageToSend = String.format("%s=USERNAME:%s, ID:%s, ICON:%s",
+                messageToSend = String.format("%s=USERNAME:%s,ID:%s,ICON:%s",
                         type,client.getUserName(),client.getID(),convertIconToString(client.getProfileImg()));
                 break;
             case MESSAGE:
-                messageToSend = String.format("%s=USERNAME:%s, ID:%s, MESSAGE:%s", type,
+                messageToSend = String.format("%s=USERNAME:%s,ID:%s,MESSAGE:%s", type,
                         client.getUserName(),client.getID(),message);
                 break;
             case FILE: //#TODO setup the file case
@@ -70,6 +69,22 @@ public class Message implements Serializable {
         }
 
         return messageToSend;
+    }
+
+    public static String generateParticipantsString(HashMap<UUID,Object[]> participants) {
+        String participantsString = "";
+        Iterator<Map.Entry<UUID,Object[]>> iterator = participants.entrySet().iterator();
+
+        while(iterator.hasNext()) {
+            Map.Entry<UUID,Object[]> pair = iterator.next();
+            Object[] details = pair.getValue();
+
+            String temp = String.format("%s,%s,%s#",pair.getKey(),details[0],convertIconToString((ImageIcon) details[1]));
+            participantsString += temp;
+
+
+        }
+        return participantsString;
     }
 
     private static String convertIconToString(javax.swing.ImageIcon image) {
@@ -92,7 +107,7 @@ public class Message implements Serializable {
     }
 
     private ImageIcon convertStringToIcon(String encodedString) {
-        byte[] bytes = encodedString.getBytes();
+        byte[] bytes = Base64.getDecoder().decode(encodedString);
         try {
             return new ImageIcon(ImageIO.read(new ByteArrayInputStream(bytes)));
         } catch (IOException e) {
@@ -105,6 +120,8 @@ public class Message implements Serializable {
     public MessageType getType() {return this.type;}
     public String getName() {return this.name;}
     public String getMessage() {return this.message;}
+    public UUID getID() {return this.ID;}
+    public ImageIcon getImageIcon() {return this.ImageIcon;}
 
     public enum MessageType {
         CONNECT, FILE, MESSAGE
