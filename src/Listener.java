@@ -102,7 +102,6 @@ public class Listener extends Thread {
     }
 
     private void serverHandler(String message) {
-        System.out.println("MESSAGE" + message);
         Message msgObj = new Message(message);
         Message.MessageType type  = msgObj.getType();
 
@@ -111,10 +110,10 @@ public class Listener extends Thread {
                 HashMap<UUID,Object[]> participants = this.SERVER.getParticipants();
 
                 // If the user isn't already connected then we add them to the participant list
-                // After this we also send all connected participants and updated list as a String
+                // After this we also send all connected participants the new connection as a String
                 if(!(participants.containsKey(msgObj.getID()))) {
                     this.SERVER.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
-                    this.serveToClients(Message.generateParticipantsString(participants));
+                    this.serveToClients(message);
                 }
                 break;
         }
@@ -126,6 +125,7 @@ public class Listener extends Thread {
 
         switch (type) {
             case CONNECT:
+                System.out.println("we got a new connection");
                 // If connection is from client other than local client, add to local participants map
                 if(msgObj.getID() != this.CLIENT.getID()) {
                     this.CLIENT.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());

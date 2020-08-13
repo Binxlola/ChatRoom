@@ -71,22 +71,11 @@ public class Message implements Serializable {
         return messageToSend;
     }
 
-    public static String generateParticipantsString(HashMap<UUID,Object[]> participants) {
-        String participantsString = "";
-        Iterator<Map.Entry<UUID,Object[]>> iterator = participants.entrySet().iterator();
-
-        while(iterator.hasNext()) {
-            Map.Entry<UUID,Object[]> pair = iterator.next();
-            Object[] details = pair.getValue();
-
-            String temp = String.format("%s,%s,%s#",pair.getKey(),details[0],convertIconToString((ImageIcon) details[1]));
-            participantsString += temp;
-
-
-        }
-        return participantsString;
-    }
-
+    /**
+     * Taking in an ImageIcon object, converts this to a Base64 encoded String
+     * @param image The ImageIcon to be converted to a string
+     * @return The ImageIcon converted to Base64 encoded String
+     */
     private static String convertIconToString(javax.swing.ImageIcon image) {
         BufferedImage img = new BufferedImage(image.getIconWidth(),image.getIconHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics g = img.createGraphics();
@@ -106,6 +95,11 @@ public class Message implements Serializable {
         return Base64.getEncoder().encodeToString(imageInByte);
     }
 
+    /**
+     * Taking in a Bas64 Encoded String of an ImageIcon object, will decode this string and covert back to ImageIcon
+     * @param encodedString The Base64 encoded String
+     * @return The ImageIcon decoded from the string
+     */
     private ImageIcon convertStringToIcon(String encodedString) {
         byte[] bytes = Base64.getDecoder().decode(encodedString);
         try {
@@ -123,7 +117,11 @@ public class Message implements Serializable {
     public UUID getID() {return this.ID;}
     public ImageIcon getImageIcon() {return this.ImageIcon;}
 
+
+    /**
+     * An enum for message type classifications
+     */
     public enum MessageType {
-        CONNECT, FILE, MESSAGE
+        CONNECT, FILE, MESSAGE, CLIENT_UPDATE
     }
 }
