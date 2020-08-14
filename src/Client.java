@@ -13,7 +13,7 @@ public class Client extends Thread {
     private final HashMap<UUID,Object[]> participants = new HashMap<UUID,Object[]>();
 
     // User details
-    private ImageIcon profileImg = new ImageIcon("src\\plus.png");
+    private ImageIcon profileImg = new ImageIcon("src\\user.png");
     private final UUID ID;
     private String userName = "TESTTEST";
 
@@ -43,7 +43,7 @@ public class Client extends Thread {
             this.listener = new Listener(socket, this);
             listener.start();
 
-            this.listener.set_controller(ClientController.getController());
+            listener.set_controller(ClientController.getController());
             // Send setup data for connecting client
             String connectMessage = Message.createFormattedString(Message.MessageType.CONNECT, this, null);
             listener.sendToServer(connectMessage);
@@ -54,6 +54,15 @@ public class Client extends Thread {
     }
 
     /**
+     * Sends a disconnect message to the server
+     */
+    public void disconnect() {
+        participants.clear();
+        String disconnectMessage = Message.createFormattedString(Message.MessageType.DISCONNECT, this, null);
+        listener.sendToServer(disconnectMessage);
+    }
+
+    /**
      * Adds a connected client to the participants mapping
      * @param ID The Unique Client ID
      * @param name The selected username for the Client
@@ -61,9 +70,9 @@ public class Client extends Thread {
      */
     public void addParticipant(UUID ID, String name, ImageIcon profileImg) {
         // If the current client does not exist in the mapping, they get added
-        if(!this.participants.containsKey(ID)) {
+        if(!participants.containsKey(ID)) {
             Object[] temp = {name,profileImg};
-            this.participants.put(ID,temp);
+            participants.put(ID,temp);
         }
     }
 

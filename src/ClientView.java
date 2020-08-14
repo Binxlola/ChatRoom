@@ -12,7 +12,7 @@ public class ClientView extends JPanel {
 
     // GUI Components below
     private final JTextArea messageArea;
-    private final JButton sendBtn, messageOptions, participantsBtn, profileBtn;
+    private final JButton sendBtn, messageOptions, participantsBtn, profileBtn, disconnectBtn;
     private final JScrollPane messageWindow;
     private final JPanel messages, participants;
     private final JFileChooser fileChooser;
@@ -25,15 +25,15 @@ public class ClientView extends JPanel {
         setLayout(null);
 
         // Setup menu buttons
-        profileBtn = new JButton(new ImageIcon("src\\user.png"));
-        profileBtn.setSize(24,24);
-        profileBtn.setLocation(510, 10);
-        profileBtn.setBorder(BorderFactory.createEmptyBorder());
-        profileBtn.setOpaque(false);
-        profileBtn.setContentAreaFilled(false);
-        profileBtn.setBorderPainted(false);
-        profileBtn.setName("PROFILE");
-        add(profileBtn);
+        disconnectBtn = new JButton(new ImageIcon("src\\disconnected.png"));
+        disconnectBtn.setSize(24,24);
+        disconnectBtn.setLocation(5, 10);
+        disconnectBtn.setBorder(BorderFactory.createEmptyBorder());
+        disconnectBtn.setOpaque(false);
+        disconnectBtn.setContentAreaFilled(false);
+        disconnectBtn.setBorderPainted(false);
+        disconnectBtn.setName("DISCONNECT");
+        add(disconnectBtn);
 
         participantsBtn = new JButton(new ImageIcon("src\\team.png"));
         participantsBtn.setSize(24,24);
@@ -44,6 +44,16 @@ public class ClientView extends JPanel {
         participantsBtn.setBorderPainted(false);
         participantsBtn.setName("PARTICIPANTS");
         add(participantsBtn);
+
+        profileBtn = new JButton(new ImageIcon("src\\user.png"));
+        profileBtn.setSize(24,24);
+        profileBtn.setLocation(510, 10);
+        profileBtn.setBorder(BorderFactory.createEmptyBorder());
+        profileBtn.setOpaque(false);
+        profileBtn.setContentAreaFilled(false);
+        profileBtn.setBorderPainted(false);
+        profileBtn.setName("PROFILE");
+        add(profileBtn);
 
         JSeparator divider = new JSeparator(JSeparator.HORIZONTAL);
         divider.setSize(535, 2);
@@ -175,8 +185,9 @@ public class ClientView extends JPanel {
     public JPanel getParticipants() {return this.participants;}
     public JTextArea getMessageArea() {return this.messageArea;}
     public JFileChooser getFileChooser() {return this.fileChooser;}
-    public JButton getProfile() {return this.profileBtn;}
+    public JButton getProfileBtn() {return this.profileBtn;}
     public JButton getParticipantsBtn() {return this.participantsBtn;}
     public JButton getSendBtn() {return this.sendBtn;}
     public JButton getMessageOptions() {return this.messageOptions;}
+    public JButton getDisconnectBtn() {return this.disconnectBtn;}
 }

@@ -28,6 +28,7 @@ public class ButtonHandler implements ActionListener {
             case "PROFILE": this.profile();break;
             case "PARTICIPANTS": this.participants();break;
             case "MESSAGE_OPTIONS": this.messageOptions();break;
+            case "DISCONNECT": this._controller.disconnectClient();break;
         }
 
     }

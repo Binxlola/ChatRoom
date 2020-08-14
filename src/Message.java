@@ -79,6 +79,9 @@ public class Message implements Serializable {
             case CLIENT_UPDATE:
                 messageToSend = String.format("%s=MESSAGE:%s",type,message);
                 break;
+            case DISCONNECT:
+                messageToSend = String.format("%s=ID:%s", type, client.getID());
+                break;
         }
 
         return messageToSend;
@@ -169,6 +172,6 @@ public class Message implements Serializable {
      * An enum for message type classifications
      */
     public enum MessageType {
-        CONNECT, FILE, MESSAGE, CLIENT_UPDATE
+        CONNECT, FILE, MESSAGE, CLIENT_UPDATE, DISCONNECT
     }
 }

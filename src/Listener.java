@@ -93,15 +93,19 @@ public class Listener extends Thread {
             }
 
             // Connection has been terminated, close down socket and IO streams
-            this.reader.close();
-            this.writer.close();
-            this.SOCKET.close();
+            reader.close();
+            writer.close();
+            SOCKET.close();
 
         } catch (IOException | InterruptedException e) {
             System.out.println("There was an error when listening for messages");
         }
     }
 
+    /**
+     * Handles all interactions between a client and the server (server side actions)
+     * @param message String message used to decide which action to take or be sent
+     */
     private void serverHandler(String message) {
         Message msgObj = new Message(message);
         Message.MessageType type  = msgObj.getType();
@@ -118,12 +122,25 @@ public class Listener extends Thread {
                 }
                 this.writer.println(Message.generateParticipantsString(this.SERVER.getParticipants()));
                 break;
+            case DISCONNECT:
+                // Remove the disconnecting client from the participants mapping and it's listener from the connections
+                this.SERVER.getParticipants().remove(msgObj.getID());
+                this.SERVER.getServerConnections().remove(this);
+
+                // Server updated participants mapping to connected clients
+                this.serveToClients(Message.generateParticipantsString(this.SERVER.getParticipants()));
+
+                // Inform other clients of the disconnection
+                this.serveToClients(message);
+
+                // Set stop to true so thread can close
+                stop = true;
         }
     }
 
     /**
-     * Handles the messages received on the client side
-     * @param message The message that needs to be handled
+     * Handles all interactions between a client and the server (server side actions)
+     * @param message String message used to decide which action to take or be sent
      */
     private void clientHandler(String message) {
         Message msgObj = new Message(message);

@@ -1,7 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ClientController extends JFrame {
 
@@ -29,8 +26,9 @@ public class ClientController extends JFrame {
         ButtonHandler buttonHandler = new ButtonHandler(this, this.view);
         view.getSendBtn().addActionListener(buttonHandler);
         view.getParticipantsBtn().addActionListener(buttonHandler);
-        view.getProfile().addActionListener(buttonHandler);
+        view.getProfileBtn().addActionListener(buttonHandler);
         view.getMessageOptions().addActionListener(buttonHandler);
+        view.getDisconnectBtn().addActionListener(buttonHandler);
 
     }
 
@@ -54,15 +52,12 @@ public class ClientController extends JFrame {
      */
     public void setNewProfileImg(ImageIcon icon) {
         this._model.setProfileImg(icon);
-        this.view.getProfile().setIcon(this._model.getProfileImg());
+        this.view.getProfileBtn().setIcon(this._model.getProfileImg());
     }
 
-    /**
-     * Creates a participant box with required details and adds this to the participants view
-     * @param name The name of the participant
-     */
-    private void addParticipant(String name) {
-
+    public void disconnectClient() {
+        this._model.disconnect();
+        this.updateView();
     }
 
     private void test() {
@@ -80,7 +75,7 @@ public class ClientController extends JFrame {
 
         switch (messageObj.getType()) {
             // If the user is connecting, then they need to be added to the participants list
-            case CONNECT: this.addParticipant(messageObj.getName());this.test();break;
+            case CONNECT: this.test();break;
             case MESSAGE: this.test();break;
         }
 
