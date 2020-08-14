@@ -13,7 +13,7 @@ public class Client extends Thread {
     private final HashMap<UUID,Object[]> participants = new HashMap<UUID,Object[]>();
 
     // User details
-    private ImageIcon profileImg = new ImageIcon("src\\user.png");
+    private ImageIcon profileImg = new ImageIcon("src\\plus.png");
     private final UUID ID;
     private String userName = "TESTTEST";
 
@@ -24,7 +24,7 @@ public class Client extends Thread {
     }
 
     /**
-     * If not Client object exists a new one will be create and returned. If one does exist then it will be returned
+     * If no Client object exists a new one will be create and returned. If one does exist then it will be returned
      * @return The Client object
      */
     public static Client getClient() {

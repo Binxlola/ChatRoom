@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -113,16 +114,25 @@ public class Message implements Serializable {
      * @param image The ImageIcon to be converted to a string
      * @return The ImageIcon converted to Base64 encoded String
      */
-    private static String convertIconToString(javax.swing.ImageIcon image) {
-        BufferedImage img = new BufferedImage(image.getIconWidth(),image.getIconHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics g = img.createGraphics();
-
-        image.paintIcon(null, g,0,0);
-        g.dispose();
-
+    private static String convertIconToString(ImageIcon image) {
+        boolean hasAlpha = false;
+        PixelGrabber grabber = new PixelGrabber(image.getImage(), 0, 0, 1, 1, false);
         ByteArrayOutputStream b = new ByteArrayOutputStream();
+
         try {
-            ImageIO.write(img, "jpg", b);
+            // Check to see if Icon has a transparent background
+            grabber.grabPixels();
+            hasAlpha = grabber.getColorModel().hasAlpha();
+
+            // If the icon has transparent background use ARGB and format png for buffered Image
+            int type = hasAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+            String format = hasAlpha ? "png" : "jpg";
+
+            BufferedImage img = new BufferedImage(image.getIconWidth(),image.getIconHeight(), type);
+            Graphics g = img.createGraphics();
+            image.paintIcon(null, g,0,0);
+            g.dispose();
+            ImageIO.write(img, format, b);
         } catch (Exception e) {
             e.printStackTrace();
         }

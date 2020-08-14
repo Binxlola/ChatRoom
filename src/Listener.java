@@ -131,12 +131,15 @@ public class Listener extends Thread {
 
         switch (type) {
             case CONNECT:
+                // When a new non-local client has joined the server, add to client side participants mapping
                 // If connection is from client other than local client, add to local participants map
                 if(msgObj.getID() != this.CLIENT.getID()) {
                     this.CLIENT.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
+                    this._controller.updateView();
                 }
                 break;
             case CLIENT_UPDATE:
+                // Client has made first connection and updates participants with all currently connected clients
                 this.CLIENT.updateParticipants(msgObj.getMessage());
                 this._controller.updateView();
                 break;

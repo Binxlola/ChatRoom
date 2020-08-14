@@ -123,6 +123,9 @@ public class ClientView extends JPanel {
         HashMap<UUID,Object[]> participants = this.model.getParticipants();
         Iterator<Map.Entry<UUID,Object[]>> iterator = participants.entrySet().iterator();
 
+        if(components.length > 0) {
+            this.getParticipants().removeAll();
+        }
         this.generateParticipantsList(iterator, this.getParticipants());
     }
 
@@ -153,6 +156,8 @@ public class ClientView extends JPanel {
             img.setIcon((ImageIcon) details[1]);
             img.setSize(50,50);
             img.setLocation(150, 0);
+            img.setBorder(BorderFactory.createEmptyBorder());
+            img.setOpaque(false);
 
             // Add all the components
             container.add(userName);
@@ -163,10 +168,6 @@ public class ClientView extends JPanel {
             y+= 50;
 
         }
-    }
-
-    private void updateParticipantList(Iterator<Map.Entry<UUID,Object[]>> participants) {
-
     }
 
     // Getters and Setters
