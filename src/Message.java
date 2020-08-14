@@ -23,24 +23,33 @@ public class Message implements Serializable {
      * @param message The message meeting correct format
      */
     public Message(String message) {
-        String[] typeAndMessage = message.split("=");
+        String[] typeAndMessage = message.split("=", 2); // Make sure we split at first "=" ONLY
+        String[] partSplit;
+        String data;
+
         this.type = MessageType.valueOf(typeAndMessage[0]);
 
-        // Loop through each part of the data section of the string
-        for(String part : typeAndMessage[1].split(",")) {
+        if(!(type.equals(MessageType.CLIENT_UPDATE))) {
+            // Loop through each part of the data section of the string
+            for(String part : typeAndMessage[1].split(",")) {
 
-            // Split the part of data for it's type and data
-            String[] partSplit = part.split(":");
-            String data = partSplit[1];
+                // Split the part of data for it's type and data
+                partSplit = part.split(":");
+                data = partSplit[1];
 
-            // Assign parts of data string to corresponding variable
-            switch (partSplit[0]) {
-                case "USERNAME": this.name = data;break;
-                case "ID": this.ID = UUID.fromString(data);break;
-                case "MESSAGE": this.message = data;break;
-                case "ICON": this.ImageIcon = this.convertStringToIcon(data);break;
+                // Assign parts of data string to corresponding variable
+                switch (partSplit[0]) {
+                    case "USERNAME": this.name = data;break;
+                    case "ID": this.ID = UUID.fromString(data);break;
+                    case "MESSAGE": this.message = data;break;
+                    case "ICON": this.ImageIcon = convertStringToIcon(data);break;
 
+                }
             }
+        } else {
+            partSplit = typeAndMessage[1].split(":");
+            data = partSplit[1];
+            this.message = data;
         }
     }
 
@@ -52,7 +61,7 @@ public class Message implements Serializable {
      * @param message The message that is being sent to the server
      * @return The correctly formatted string
      */
-    public static String createStringForServer(MessageType type, Client client, String message) {
+    public static String createFormattedString(MessageType type, Client client, String message) {
         String messageToSend = "";
 
         switch (type) {
@@ -66,9 +75,37 @@ public class Message implements Serializable {
                 break;
             case FILE: //#TODO setup the file case
                 break;
+            case CLIENT_UPDATE:
+                messageToSend = String.format("%s=MESSAGE:%s",type,message);
+                break;
         }
 
         return messageToSend;
+    }
+
+    /**
+     * Taking in a mapping of client ID's to client details, generates a String representation of the mapping
+     * @param participants The mapping of clients/participants
+     * @return The String representation of clients
+     */
+    public static String generateParticipantsString(HashMap<UUID,Object[]> participants) {
+        StringBuilder participantsString = new StringBuilder();
+        Iterator<Map.Entry<UUID,Object[]>> iterator = participants.entrySet().iterator();
+
+        while(iterator.hasNext()) {
+            Map.Entry<UUID,Object[]> pair = iterator.next();
+            Object[] details = pair.getValue();
+
+            String temp = String.format("%s,%s,%s%s",
+                    pair.getKey(),
+                    details[0],
+                    convertIconToString((ImageIcon) details[1]),
+                    iterator.hasNext() ? "#" : "");
+            participantsString.append(temp);
+
+
+        }
+        return createFormattedString(MessageType.CLIENT_UPDATE, null, participantsString.toString());
     }
 
     /**
@@ -100,7 +137,7 @@ public class Message implements Serializable {
      * @param encodedString The Base64 encoded String
      * @return The ImageIcon decoded from the string
      */
-    private ImageIcon convertStringToIcon(String encodedString) {
+    public static ImageIcon convertStringToIcon(String encodedString) {
         byte[] bytes = Base64.getDecoder().decode(encodedString);
         try {
             return new ImageIcon(ImageIO.read(new ByteArrayInputStream(bytes)));

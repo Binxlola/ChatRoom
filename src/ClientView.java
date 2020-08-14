@@ -91,10 +91,9 @@ public class ClientView extends JPanel {
 
         // Setup open/close elements
         participants = new JPanel();
-        participants.setLayout(new GridLayout(1, 1, 0, 3));
+        participants.setLayout(null);
         participants.setSize(230, 940);
         participants.setLocation(560, 10);
-        participants.setBackground(Color.RED);
 
         // Setup file chooser for file upload
         fileChooser = new JFileChooser();
@@ -116,7 +115,7 @@ public class ClientView extends JPanel {
     }
 
     public void update() {
-
+        this.setupParticipants();
     }
 
     private void setupParticipants() {
@@ -124,15 +123,14 @@ public class ClientView extends JPanel {
         HashMap<UUID,Object[]> participants = this.model.getParticipants();
         Iterator<Map.Entry<UUID,Object[]>> iterator = participants.entrySet().iterator();
 
-        if(components.length > 0) {
-            this.generateParticipantsList(iterator);
-        } else {
-            this.updateParticipantList(iterator);
-        }
-        this.participants.getComponents();
+        this.generateParticipantsList(iterator, this.getParticipants());
     }
 
-    private void generateParticipantsList(Iterator<Map.Entry<UUID,Object[]>> participants) {
+    /**
+     * Initial setup of participants view for the local client
+     * @param participants The mapping of currently connected clients/participants
+     */
+    private void generateParticipantsList(Iterator<Map.Entry<UUID,Object[]>> participants, JPanel mainPanel) {
         int y = 5;
 
         while(participants.hasNext()) {
@@ -159,10 +157,10 @@ public class ClientView extends JPanel {
             // Add all the components
             container.add(userName);
             container.add(img);
-            add(container);
+            mainPanel.add(container);
 
             // Increase the y-axis placement value
-            y+= 5;
+            y+= 50;
 
         }
     }

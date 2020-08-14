@@ -86,7 +86,8 @@ public class Listener extends Thread {
 //                    this.serveToClients(message);
                     this.serverHandler(message);
                 } else if(this.CLIENT != null) {
-                    this._controller.displayMessage(message);
+//                    this._controller.displayMessage(message);
+                    System.out.println("WE got a message");
                     this.clientHandler(message);
                 }
             }
@@ -115,21 +116,29 @@ public class Listener extends Thread {
                     this.SERVER.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
                     this.serveToClients(message);
                 }
+                this.writer.println(Message.generateParticipantsString(this.SERVER.getParticipants()));
                 break;
         }
     }
 
+    /**
+     * Handles the messages received on the client side
+     * @param message The message that needs to be handled
+     */
     private void clientHandler(String message) {
         Message msgObj = new Message(message);
         Message.MessageType type  = msgObj.getType();
 
         switch (type) {
             case CONNECT:
-                System.out.println("we got a new connection");
                 // If connection is from client other than local client, add to local participants map
                 if(msgObj.getID() != this.CLIENT.getID()) {
                     this.CLIENT.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
                 }
+                break;
+            case CLIENT_UPDATE:
+                this.CLIENT.updateParticipants(msgObj.getMessage());
+                this._controller.updateView();
                 break;
         }
 
