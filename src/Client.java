@@ -77,12 +77,14 @@ public class Client extends Thread {
     }
 
     /**
-     * Taking in a participants String using the format "ID,Username,Icon String" for each client separated by "#"
+     * Taking in a participants String using the format "ID,Username,Icon String" for each client separated by ";"
+     * ";" is base 64 encoding safe (it will not be found in the encoded string)
      * will parse the string and add each Client to the participants mapping
      * @param participantsString The correctly formatted participants string for parsing
      */
     public void updateParticipants(String participantsString) {
-        String[] participants = participantsString.split("#");
+        this.participants.clear(); // Reset local mapping, so we get 100% synced mapping
+        String[] participants = participantsString.split(";");
         for(String participant: participants) {
             String[] parts = participant.split(",");
             this.addParticipant(UUID.fromString(parts[0]),parts[1],Message.convertStringToIcon(parts[2]));

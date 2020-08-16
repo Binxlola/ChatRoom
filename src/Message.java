@@ -100,11 +100,12 @@ public class Message implements Serializable {
             Map.Entry<UUID,Object[]> pair = iterator.next();
             Object[] details = pair.getValue();
 
+            // ";" is base 64 encoding safe (it will not be found in the encoded string)
             String temp = String.format("%s,%s,%s%s",
                     pair.getKey(),
                     details[0],
                     convertIconToString((ImageIcon) details[1]),
-                    iterator.hasNext() ? "#" : "");
+                    iterator.hasNext() ? ";" : "");
             participantsString.append(temp);
 
 
