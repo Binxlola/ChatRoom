@@ -40,7 +40,11 @@ public class ButtonHandler implements ActionListener {
         JTextArea messageArea = this.VIEW.getMessageArea();
         String message = messageArea.getText();
         if(!message.equals("")) {
-            _controller.getClientListener().sendToServer(message);
+            _controller.getClientListener().sendToServer(Message.createFormattedString(
+                    Message.MessageType.MESSAGE,
+                    Client.getClient(),
+                    message)
+            );
             messageArea.setText(null); // Clears our the text area
         }
     }

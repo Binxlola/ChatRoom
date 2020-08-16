@@ -128,6 +128,36 @@ public class ClientView extends JPanel {
         this.setupParticipants();
     }
 
+    public void addMessageBlock(Message msgObj) {
+//        JPanel lastMsg = (JPanel) this.messages.getComponent(-1);
+
+        JPanel container = new JPanel(new GridLayout(1,2));
+        JLabel user = new JLabel(), message = new JLabel();
+        user.setText("<html>" + msgObj.getName() + "<html>");
+        message.setText("<html>" + msgObj.getMessage() + "<html>");
+        user.setSize(this.getContainerSize(msgObj.getName()));
+        message.setSize(this.getContainerSize(msgObj.getMessage()));
+        container.setSize(user.getWidth() + message.getWidth(), user.getHeight() + message.getHeight());
+        container.setLocation(5,5);
+        container.add(user);
+        container.add(message);
+        this.messages.add(container);
+
+
+    }
+
+    private Dimension getContainerSize(String text) {
+        FontMetrics metrics = getGraphics().getFontMetrics(UIManager.getDefaults().getFont("Label.font"));
+        int height = metrics.getHeight();
+        int width = metrics.stringWidth(text);
+
+        Dimension size = new Dimension(width + 2, height + 2);
+        return size;
+    }
+
+    /**
+     * Preps the participants view for component generation
+     */
     private void setupParticipants() {
         Component[] components = this.participants.getComponents();
         HashMap<UUID,Object[]> participants = this.model.getParticipants();

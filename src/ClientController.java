@@ -64,28 +64,31 @@ public class ClientController extends JFrame {
         //TODO this is where the message layout can be setup
     }
 
+    /**
+     * Updates the view as required and repaints the client window
+     */
     public void updateView() {
         this.view.update();
+        this.repaintClient();
+    }
+
+    /**
+     * Repaint the view and controller of the client window
+     */
+    private void repaintClient() {
         this.repaint();
         this.view.repaint();
     }
 
-    public void displayMessage(String message) {
-        Message messageObj = new Message(message);
-
-        switch (messageObj.getType()) {
-            // If the user is connecting, then they need to be added to the participants list
-            case CONNECT: this.test();break;
-            case MESSAGE: this.test();break;
-        }
+    /**
+     * Passes a received message to the view so as to be added to the message display, will then repaint
+     * @param message The received message contained in a Message object
+     */
+    public void displayMessage(Message message) {
+        this.view.addMessageBlock(message);
+        this.repaintClient();
 
         //#TODO This needs to be taken out and have it's own method created to deal with this functionality
-        JPanel messagePanel = this.view.getMessages();
-        JLabel test = new JLabel(message);
-        test.setSize(25,25);
-        test.setLocation(0,0);
-        messagePanel.add(test);
-        messagePanel.repaint();
     }
 
     // Getters and Setters

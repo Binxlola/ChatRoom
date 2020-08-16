@@ -83,11 +83,9 @@ public class Listener extends Thread {
                 message = this.reader.readLine(); // Data has come through
 
                 if(this.SERVER != null) {
-//                    this.serveToClients(message);
                     this.serverHandler(message);
                 } else if(this.CLIENT != null) {
-//                    this._controller.displayMessage(message);
-                    System.out.println("WE got a message");
+                    System.out.println(message);
                     this.clientHandler(message);
                 }
             }
@@ -135,6 +133,8 @@ public class Listener extends Thread {
 
                 // Set stop to true so thread can close
                 stop = true;
+                break;
+            case MESSAGE: serveToClients(message);
         }
     }
 
@@ -147,6 +147,9 @@ public class Listener extends Thread {
         Message.MessageType type  = msgObj.getType();
 
         switch (type) {
+            // All cases expect Client Update, the message is forwarded to the controller
+            case MESSAGE:
+            case DISCONNECT: this._controller.displayMessage(msgObj); break;
             case CONNECT:
                 // When a new non-local client has joined the server, add to client side participants mapping
                 // If connection is from client other than local client, add to local participants map
