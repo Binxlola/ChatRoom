@@ -13,7 +13,7 @@ public class ClientView extends JPanel {
     // GUI Components below
     private final JTextArea messageArea;
     private final JButton sendBtn, messageOptions, participantsBtn, profileBtn, disconnectBtn;
-    private final JScrollPane messageWindow;
+    private final JScrollPane messageWindow, participantsScroll;
     private final JPanel messages, participants;
     private final JFileChooser fileChooser;
 
@@ -102,8 +102,12 @@ public class ClientView extends JPanel {
         // Setup open/close elements
         participants = new JPanel();
         participants.setLayout(null);
-        participants.setSize(230, 940);
-        participants.setLocation(560, 10);
+        participants.setPreferredSize(new Dimension(230, 2000));
+        participantsScroll = new JScrollPane(participants,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        participantsScroll.setSize(230,940);
+        participantsScroll.setLocation(560, 10);
 
         // Setup file chooser for file upload
         fileChooser = new JFileChooser();
@@ -131,13 +135,20 @@ public class ClientView extends JPanel {
     public void addMessageBlock(Message msgObj) {
 //        JPanel lastMsg = (JPanel) this.messages.getComponent(-1);
 
-        JPanel container = new JPanel(new GridLayout(1,2));
+        JPanel container = new JPanel();
+        container.setLayout(null);
         JLabel user = new JLabel(), message = new JLabel();
-        user.setText("<html>" + msgObj.getName() + "<html>");
-        message.setText("<html>" + msgObj.getMessage() + "<html>");
-        user.setSize(this.getContainerSize(msgObj.getName()));
-        message.setSize(this.getContainerSize(msgObj.getMessage()));
-        container.setSize(user.getWidth() + message.getWidth(), user.getHeight() + message.getHeight());
+        user.setFont(new Font("Arial", Font.PLAIN, 12));
+        user.setText(msgObj.getName() + ":");
+        user.setSize(65, 25);
+        user.setLocation(0,0);
+
+
+
+        message.setText("<html>" + msgObj.getMessage() + "</html>");
+        message.setSize(190, this.getContainerHeight("<html>" + msgObj.getMessage() + "</html>", null));
+        message.setLocation(66, 0);
+        container.setSize(300, message.getHeight());
         container.setLocation(5,5);
         container.add(user);
         container.add(message);
@@ -146,13 +157,14 @@ public class ClientView extends JPanel {
 
     }
 
-    private Dimension getContainerSize(String text) {
-        FontMetrics metrics = getGraphics().getFontMetrics(UIManager.getDefaults().getFont("Label.font"));
-        int height = metrics.getHeight();
+    private int getContainerHeight(String text, Font font) {
+        FontMetrics metrics;
+        metrics = getGraphics().getFontMetrics(font != null ? font : UIManager.getDefaults().getFont("Label.font"));
         int width = metrics.stringWidth(text);
+        int linesNeeded = width / 190;
+        int height = 25 + (linesNeeded * 25);
 
-        Dimension size = new Dimension(width + 2, height + 2);
-        return size;
+        return height;
     }
 
     /**
@@ -213,6 +225,7 @@ public class ClientView extends JPanel {
     // Getters and Setters
     public JPanel getMessages() {return this.messages;}
     public JPanel getParticipants() {return this.participants;}
+    public JScrollPane getParticipantsScroll() {return this.participantsScroll;}
     public JTextArea getMessageArea() {return this.messageArea;}
     public JFileChooser getFileChooser() {return this.fileChooser;}
     public JButton getProfileBtn() {return this.profileBtn;}

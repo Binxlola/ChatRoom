@@ -104,7 +104,7 @@ public class ButtonHandler implements ActionListener {
      * Will open the participants view of the application
      */
     private void openParticipants() {
-        JPanel participantsDisplay = this.VIEW.getParticipants();
+        JScrollPane participantsDisplay = this.VIEW.getParticipantsScroll();
 
         // Get required dimensions and compute new dimensions
         int mainWidth = this.VIEW.getWidth();
@@ -127,7 +127,7 @@ public class ButtonHandler implements ActionListener {
      * Will close the participants view of the application
      */
     private void closeParticipants() {
-        JPanel participantsDisplay = this.VIEW.getParticipants();
+        JScrollPane participantsDisplay = this.VIEW.getParticipantsScroll();
 
         // Get required dimensions
         int originalWidth = this._controller.getOriginalWidth();
