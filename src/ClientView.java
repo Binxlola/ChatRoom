@@ -138,17 +138,17 @@ public class ClientView extends JPanel {
         JPanel container = new JPanel();
         container.setLayout(null);
         JLabel user = new JLabel(), message = new JLabel();
-        user.setFont(new Font("Arial", Font.PLAIN, 12));
-        user.setText(msgObj.getName() + ":");
-        user.setSize(65, 25);
-        user.setLocation(0,0);
 
 
 
         message.setText("<html>" + msgObj.getMessage() + "</html>");
         message.setSize(190, this.getContainerHeight("<html>" + msgObj.getMessage() + "</html>", null));
-        message.setLocation(66, 0);
-        container.setSize(300, message.getHeight());
+        message.setLocation(5, 5);
+
+        // Container setup
+        container.setBorder(BorderFactory.createTitledBorder(msgObj.getName()));
+        container.setOpaque(false);
+        container.setSize(320, message.getHeight());
         container.setLocation(5,5);
         container.add(user);
         container.add(message);
@@ -161,8 +161,8 @@ public class ClientView extends JPanel {
         FontMetrics metrics;
         metrics = getGraphics().getFontMetrics(font != null ? font : UIManager.getDefaults().getFont("Label.font"));
         int width = metrics.stringWidth(text);
-        int linesNeeded = width / 190;
-        int height = 25 + (linesNeeded * 25);
+        int linesNeeded = width / 300;
+        int height = 30 + (linesNeeded * 30);
 
         return height;
     }
