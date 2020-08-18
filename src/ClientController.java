@@ -85,7 +85,7 @@ public class ClientController extends JFrame {
      * @param message The received message contained in a Message object
      */
     public void displayMessage(Message message) {
-        this.view.addMessageBlock(message);
+        this.view.addMessageBlock(message, message.getType());
         this.repaintClient();
 
         //#TODO This needs to be taken out and have it's own method created to deal with this functionality

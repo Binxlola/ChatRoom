@@ -157,6 +157,7 @@ public class Listener extends Thread {
                     this.CLIENT.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
                     this._controller.updateView();
                 }
+                this._controller.displayMessage(msgObj);
                 break;
             case CLIENT_UPDATE:
                 // Client has made first connection and updates participants with all currently connected clients

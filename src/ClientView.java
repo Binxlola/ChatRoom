@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -132,25 +134,58 @@ public class ClientView extends JPanel {
         this.setupParticipants();
     }
 
-    public void addMessageBlock(Message msgObj) {
-//        JPanel lastMsg = (JPanel) this.messages.getComponent(-1);
+    /**
+     * Create the Component for displaying a message in the message view. Then add the component to the view
+     * @param msgObj The original message object to be used
+     * @param type The type of message
+     */
+    public void addMessageBlock(Message msgObj, Message.MessageType type) {
+        int yPos;
+        int xPos;
+
+        Component[] componentList = this.messages.getComponents();
+        if(componentList.length > 0) {
+            JPanel lastMsg = (JPanel) componentList[componentList.length - 1];
+            yPos = lastMsg.getY() + lastMsg.getHeight() + 5; // The extra 5 is for padding
+        } else {
+            yPos = 5;
+        }
+
 
         JPanel container = new JPanel();
         container.setLayout(null);
-        JLabel user = new JLabel(), message = new JLabel();
+        JLabel message = new JLabel();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        switch (type) {
+            case MESSAGE:
+                message.setText("<html>" + msgObj.getMessage() + "</html>");
+                message.setSize(190, this.getContainerHeight("<html>" + msgObj.getMessage() + "</html>", null));
+                container.setBorder(BorderFactory.createTitledBorder(msgObj.getName()));
+                container.setSize(320, message.getHeight());
+                xPos = msgObj.getID().equals(this.model.getID()) ? 5 : this.messages.getWidth() - 325;
+                break;
+            case CONNECT:
+            case DISCONNECT:
+                message.setText(String.format("%s has %s the room at %s",
+                        msgObj.getName(),
+                        type.equals(Message.MessageType.CONNECT) ? "connected to" : "disconnected from",
+                        formatter.format(LocalDateTime.now()))
+                );
+                message.setSize(535, 30);
+                container.setSize(535, 30);
+                xPos = 10;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
+        }
 
 
-
-        message.setText("<html>" + msgObj.getMessage() + "</html>");
-        message.setSize(190, this.getContainerHeight("<html>" + msgObj.getMessage() + "</html>", null));
         message.setLocation(5, 5);
 
         // Container setup
-        container.setBorder(BorderFactory.createTitledBorder(msgObj.getName()));
         container.setOpaque(false);
-        container.setSize(320, message.getHeight());
-        container.setLocation(5,5);
-        container.add(user);
+        container.setLocation(xPos,yPos);
         container.add(message);
         this.messages.add(container);
 
