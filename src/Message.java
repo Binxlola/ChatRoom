@@ -13,11 +13,12 @@ public class Message implements Serializable {
 
     private String status;
     private UUID ID;
-    private String name;
+    private String clientName;
     private String message;
     private ImageIcon ImageIcon;
     private byte[] data;
-    private MessageType type;
+    private String fileName;
+    private final MessageType type;
 
     /**
      * Will parse a message and init the message object with required fields
@@ -40,10 +41,12 @@ public class Message implements Serializable {
 
                 // Assign parts of data string to corresponding variable
                 switch (partSplit[0]) {
-                    case "USERNAME": this.name = data;break;
+                    case "USERNAME": this.clientName = data;break;
                     case "ID": this.ID = UUID.fromString(data);break;
                     case "MESSAGE": this.message = data;break;
                     case "ICON": this.ImageIcon = convertStringToIcon(data);break;
+                    case "DATA": this.data = data.getBytes();
+                    case "FILENAME": this.fileName = data;
 
                 }
             }
@@ -74,17 +77,31 @@ public class Message implements Serializable {
                 messageToSend = String.format("%s=USERNAME:%s,ID:%s,MESSAGE:%s", type,
                         client.getUserName(),client.getID(),message);
                 break;
-            case FILE: //#TODO setup the file case
-                break;
             case CLIENT_UPDATE:
                 messageToSend = String.format("%s=MESSAGE:%s",type,message);
                 break;
             case DISCONNECT:
-                messageToSend = String.format("%s=ID:%s", type, client.getID());
+                messageToSend = String.format("%s=USERNAME:%s,ID:%s", type, client.getUserName(), client.getID());
                 break;
         }
 
         return messageToSend;
+    }
+
+    /**
+     * Used when sending message or data to the server where the data is passed in form of a byte[] and not String
+     * @param type Type of data being sent to the server
+     * @param client The client that is sending the message to the server
+     * @param data The array of byte data representing what is to be sent
+     * @param fileName The file name if need be provided
+     * @return The correctly formatted string
+     */
+    public static String createFormattedString(MessageType type, Client client, byte[] data, String fileName) {
+        return String.format("%s=USERNAME:%s,ID:%s,DATA:%s,FILENAME:%s",
+                type,
+                client.getUserName()
+                ,client.getID()
+                ,data,fileName);
     }
 
     /**
@@ -119,7 +136,7 @@ public class Message implements Serializable {
      * @return The ImageIcon converted to Base64 encoded String
      */
     private static String convertIconToString(ImageIcon image) {
-        boolean hasAlpha = false;
+        boolean hasAlpha;
         PixelGrabber grabber = new PixelGrabber(image.getImage(), 0, 0, 1, 1, false);
         ByteArrayOutputStream b = new ByteArrayOutputStream();
 
@@ -143,7 +160,7 @@ public class Message implements Serializable {
 
         byte[] imageInByte = b.toByteArray();
 
-        return Base64.getEncoder().encodeToString(imageInByte);
+        return encodeByteArray(imageInByte);
     }
 
     /**
@@ -152,7 +169,7 @@ public class Message implements Serializable {
      * @return The ImageIcon decoded from the string
      */
     public static ImageIcon convertStringToIcon(String encodedString) {
-        byte[] bytes = Base64.getDecoder().decode(encodedString);
+        byte[] bytes = decodeBase64toByteArray(encodedString);
         try {
             return new ImageIcon(ImageIO.read(new ByteArrayInputStream(bytes)));
         } catch (IOException e) {
@@ -162,9 +179,19 @@ public class Message implements Serializable {
         return null;
     }
 
+    public static String encodeByteArray(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    public static byte[] decodeBase64toByteArray(String encodedString) {
+        return Base64.getDecoder().decode(encodedString);
+    }
+
     public MessageType getType() {return this.type;}
-    public String getName() {return this.name;}
+    public String getClientName() {return this.clientName;}
     public String getMessage() {return this.message;}
+    public String getFileName() {return this.fileName;}
+    public byte[] getData() {return this.data;}
     public UUID getID() {return this.ID;}
     public ImageIcon getImageIcon() {return this.ImageIcon;}
 

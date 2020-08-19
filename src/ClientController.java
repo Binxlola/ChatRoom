@@ -8,6 +8,7 @@ public class ClientController extends JFrame {
     private final ClientView view = new ClientView(this._model);
     private boolean participantsOpen = false;
     private final int originalWidth, originalHeight;
+    private final ButtonHandler buttonHandler = new ButtonHandler(this, this.view);
 
     private ClientController(String title) {
         super(title); //#TODO allow user to change title of their client window
@@ -23,11 +24,10 @@ public class ClientController extends JFrame {
         this.originalWidth = this.view.getWidth();
 
         // Add all event handlers below
-        ButtonHandler buttonHandler = new ButtonHandler(this, this.view);
         view.getSendBtn().addActionListener(buttonHandler);
         view.getParticipantsBtn().addActionListener(buttonHandler);
         view.getProfileBtn().addActionListener(buttonHandler);
-        view.getMessageOptions().addActionListener(buttonHandler);
+        view.getFileUpload().addActionListener(buttonHandler);
         view.getDisconnectBtn().addActionListener(buttonHandler);
 
     }
@@ -45,7 +45,7 @@ public class ClientController extends JFrame {
     }
 
 
-    // Methods interacting with the ClientView or Client
+    // Methods interacting with the ClientView or ClientModel
     /**
      * Set the client profile image to the given image icon, and then sets the profile button icon to the same
      * @param icon The image icon to be set
@@ -58,10 +58,6 @@ public class ClientController extends JFrame {
     public void disconnectClient() {
         this._model.disconnect();
         this.updateView();
-    }
-
-    private void test() {
-        //TODO this is where the message layout can be setup
     }
 
     /**
@@ -87,8 +83,6 @@ public class ClientController extends JFrame {
     public void displayMessage(Message message) {
         this.view.addMessageBlock(message, message.getType());
         this.repaintClient();
-
-        //#TODO This needs to be taken out and have it's own method created to deal with this functionality
     }
 
     // Getters and Setters
@@ -97,6 +91,7 @@ public class ClientController extends JFrame {
     public void setParticipantsOpen(boolean open) {this.participantsOpen = open;}
     public int getOriginalWidth() {return this.originalWidth;}
     public int getOriginalHeight() {return  this.originalHeight;}
+    public ButtonHandler getButtonHandler() {return  this.buttonHandler;}
 
     public static void main(String[] args) {
         JFrame frame = ClientController.getController();

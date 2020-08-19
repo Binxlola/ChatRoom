@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class ButtonHandler implements ActionListener {
 
@@ -20,14 +21,12 @@ public class ButtonHandler implements ActionListener {
         JButton button = (JButton) e.getSource();
         String name = button.getName();
 
-        System.out.println(e);
-
         // Checks which method to call to handle the event
         switch(name) {
             case "SEND": this.send();break;
             case "PROFILE": this.profile();break;
             case "PARTICIPANTS": this.participants();break;
-            case "MESSAGE_OPTIONS": this.messageOptions();break;
+            case "FILE_UPLOAD": this.fileUpload();break;
             case "DISCONNECT": this._controller.disconnectClient();break;
         }
 
@@ -68,11 +67,28 @@ public class ButtonHandler implements ActionListener {
     }
 
     /**
-     * Handles additional features such as file upload, emojis and others alike
+     * Requests the user select a file they wish to share with other participants.
+     * If the file is valid it will be sent to the server and distributed
      */
-    private void messageOptions() {
-        //#TODO change to a multi-function handler (Currently used for file upload)
+    private void fileUpload() {
         File selectedFile = this.selectFile();
+        try {
+            byte[] data = Files.readAllBytes(selectedFile.toPath());
+
+            // Reading file was successful, it can be sent to the server
+            _controller.getClientListener().sendToServer(Message.createFormattedString(
+                    Message.MessageType.FILE,
+                    Client.getClient(),
+                    data,
+                    selectedFile.getName())
+            );
+        } catch (IOException e) {
+            System.err.println("File could not be opened");
+            e.printStackTrace();
+        }
+
+
+
     }
 
     /**

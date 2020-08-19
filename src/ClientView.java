@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDateTime;
@@ -10,11 +12,11 @@ import java.util.UUID;
 
 public class ClientView extends JPanel {
 
-    private Client model;
+    private final Client model;
 
     // GUI Components below
     private final JTextArea messageArea;
-    private final JButton sendBtn, messageOptions, participantsBtn, profileBtn, disconnectBtn;
+    private final JButton sendBtn, fileUpload, participantsBtn, profileBtn, disconnectBtn;
     private final JScrollPane messageWindow, participantsScroll;
     private final JPanel messages, participants;
     private final JFileChooser fileChooser;
@@ -76,15 +78,15 @@ public class ClientView extends JPanel {
         add(messageWindow);
 
         // Set up text area for client message input
-        messageOptions = new JButton(new ImageIcon("src\\plus.png"));
-        messageOptions.setSize(32,32);
-        messageOptions.setLocation(10,920);
-        messageOptions.setBorder(BorderFactory.createEmptyBorder());
-        messageOptions.setOpaque(false);
-        messageOptions.setContentAreaFilled(false);
-        messageOptions.setBorderPainted(false);
-        messageOptions.setName("MESSAGE_OPTIONS");
-        add(messageOptions);
+        fileUpload = new JButton(new ImageIcon("src\\plus.png"));
+        fileUpload.setSize(32,32);
+        fileUpload.setLocation(10,920);
+        fileUpload.setBorder(BorderFactory.createEmptyBorder());
+        fileUpload.setOpaque(false);
+        fileUpload.setContentAreaFilled(false);
+        fileUpload.setBorderPainted(false);
+        fileUpload.setName("FILE_UPLOAD");
+        add(fileUpload);
 
         messageArea = new JTextArea();
         messageArea.setSize(450,32);
@@ -116,17 +118,6 @@ public class ClientView extends JPanel {
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home"))); // set to home dir
 
 
-
-
-
-
-
-
-
-
-
-
-
         setSize(560, 1000);
     }
 
@@ -154,39 +145,54 @@ public class ClientView extends JPanel {
 
         JPanel container = new JPanel();
         container.setLayout(null);
-        JLabel message = new JLabel();
+        JLabel message = null;
+        JButton file = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
         switch (type) {
             case MESSAGE:
+                message = new JLabel();
+                LineBorder roundedBorder = new LineBorder(Color.CYAN, 1, true);
                 message.setText("<html>" + msgObj.getMessage() + "</html>");
                 message.setSize(190, this.getContainerHeight("<html>" + msgObj.getMessage() + "</html>", null));
-                container.setBorder(BorderFactory.createTitledBorder(msgObj.getName()));
+                container.setBorder(BorderFactory.createTitledBorder(roundedBorder,
+                        msgObj.getClientName(),
+                        msgObj.getID().equals(this.model.getID()) ? 1 :3, // 0 is for left, 3 is for right
+                        TitledBorder.DEFAULT_POSITION));
                 container.setSize(320, message.getHeight());
                 xPos = msgObj.getID().equals(this.model.getID()) ? 5 : this.messages.getWidth() - 325;
                 break;
             case CONNECT:
             case DISCONNECT:
+                message = new JLabel();
                 message.setText(String.format("%s has %s the room at %s",
-                        msgObj.getName(),
+                        msgObj.getClientName(),
                         type.equals(Message.MessageType.CONNECT) ? "connected to" : "disconnected from",
                         formatter.format(LocalDateTime.now()))
                 );
+                message.setHorizontalAlignment(SwingConstants.CENTER);
+                message.setVerticalAlignment(SwingConstants.CENTER);
                 message.setSize(535, 30);
                 container.setSize(535, 30);
                 xPos = 10;
+                break;
+            case FILE:
+                file = new JButton(msgObj.getFileName());
+                file.setActionCommand(Message.encodeByteArray(msgObj.getData()));
+                file.setSize(320, this.getContainerHeight(msgObj.getFileName(), null));
+                file.setBorder(new LineBorder(Color.BLACK, 1, true));
+                file.addActionListener(ClientController.getController().getButtonHandler());
+                container.setSize(320, file.getHeight());
+                xPos = msgObj.getID().equals(this.model.getID()) ? 5 : this.messages.getWidth() - 325;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + type);
         }
 
-
-        message.setLocation(5, 5);
-
         // Container setup
         container.setOpaque(false);
         container.setLocation(xPos,yPos);
-        container.add(message);
+        container.add(type.equals(Message.MessageType.FILE) ? file : message);
         this.messages.add(container);
 
 
@@ -266,6 +272,6 @@ public class ClientView extends JPanel {
     public JButton getProfileBtn() {return this.profileBtn;}
     public JButton getParticipantsBtn() {return this.participantsBtn;}
     public JButton getSendBtn() {return this.sendBtn;}
-    public JButton getMessageOptions() {return this.messageOptions;}
+    public JButton getFileUpload() {return this.fileUpload;}
     public JButton getDisconnectBtn() {return this.disconnectBtn;}
 }

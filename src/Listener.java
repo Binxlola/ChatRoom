@@ -115,7 +115,7 @@ public class Listener extends Thread {
                 // If the user isn't already connected then we add them to the participant list
                 // After this we also send all connected participants the new connection as a String
                 if(!(participants.containsKey(msgObj.getID()))) {
-                    this.SERVER.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
+                    this.SERVER.addParticipant(msgObj.getID(),msgObj.getClientName(), msgObj.getImageIcon());
                     this.serveToClients(message);
                 }
                 this.writer.println(Message.generateParticipantsString(this.SERVER.getParticipants()));
@@ -134,7 +134,8 @@ public class Listener extends Thread {
                 // Set stop to true so thread can close
                 stop = true;
                 break;
-            case MESSAGE: serveToClients(message);
+            case MESSAGE:
+            case FILE: serveToClients(message); break;
         }
     }
 
@@ -149,12 +150,13 @@ public class Listener extends Thread {
         switch (type) {
             // All cases expect Client Update, the message is forwarded to the controller
             case MESSAGE:
-            case DISCONNECT: this._controller.displayMessage(msgObj); break;
+            case DISCONNECT:
+            case FILE: this._controller.displayMessage(msgObj); break;
             case CONNECT:
                 // When a new non-local client has joined the server, add to client side participants mapping
                 // If connection is from client other than local client, add to local participants map
                 if(msgObj.getID() != this.CLIENT.getID()) {
-                    this.CLIENT.addParticipant(msgObj.getID(),msgObj.getName(), msgObj.getImageIcon());
+                    this.CLIENT.addParticipant(msgObj.getID(),msgObj.getClientName(), msgObj.getImageIcon());
                     this._controller.updateView();
                 }
                 this._controller.displayMessage(msgObj);
