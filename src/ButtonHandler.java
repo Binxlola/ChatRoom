@@ -3,7 +3,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class ButtonHandler implements ActionListener {
@@ -27,6 +29,7 @@ public class ButtonHandler implements ActionListener {
             case "PROFILE": this.profile();break;
             case "PARTICIPANTS": this.participants();break;
             case "FILE_UPLOAD": this.fileUpload();break;
+            case "FILE_DOWNLOAD": this.fileDownload(e.getActionCommand(), button.getText());break;
             case "DISCONNECT": this._controller.disconnectClient();break;
         }
 
@@ -49,11 +52,34 @@ public class ButtonHandler implements ActionListener {
     }
 
     /**
+     * Asks the user for a location where a given file will be written and saved to
+     * @param fileData The base64 encoded string of the file byte data
+     * @param name Name of the file being downloaded
+     */
+    private void fileDownload(String fileData, String name) {
+        File selectedFile = this.selectFile(false, name);
+        byte[] fileBytes = Message.decodeBase64toByteArray(fileData);
+
+        System.out.println(selectedFile.getAbsoluteFile());
+
+        try {
+            File file = new File(String.valueOf(selectedFile.getAbsoluteFile()));
+            OutputStream out = new FileOutputStream(file);
+
+            out.write(fileBytes);
+            out.close();
+        } catch(Exception e) {
+            System.err.println("There was an error saving the file");
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Opens a file selector for the user to select a file. If the user selects a compatible file an image icon
      * will be created and set as the new client profile image and profile button icon
      */
     private void profile() {
-        File selectedFile = this.selectFile();
+        File selectedFile = this.selectFile(true, "");
 
         try {
             if(!(ImageIO.read(selectedFile) == null)) {
@@ -71,7 +97,7 @@ public class ButtonHandler implements ActionListener {
      * If the file is valid it will be sent to the server and distributed
      */
     private void fileUpload() {
-        File selectedFile = this.selectFile();
+        File selectedFile = this.selectFile(true, "");
         try {
             byte[] data = Files.readAllBytes(selectedFile.toPath());
 
@@ -95,10 +121,11 @@ public class ButtonHandler implements ActionListener {
      * Opens the dialog to select a file, once a file has been select it will be returned.
      * @return The user selected file
      */
-    private File selectFile() {
+    private File selectFile(boolean open, String fileName) {
         JFileChooser fileChooser = this.VIEW.getFileChooser();
+        fileChooser.setSelectedFile(new File(fileName));
         File selectedFile = null;
-        int selected = fileChooser.showOpenDialog(this.VIEW);
+        int selected = open ? fileChooser.showOpenDialog(this.VIEW) : fileChooser.showSaveDialog(this.VIEW);
 
         if(selected == JFileChooser.APPROVE_OPTION) { selectedFile = fileChooser.getSelectedFile();}
         return selectedFile;

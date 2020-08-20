@@ -5,30 +5,33 @@ public class ClientController extends JFrame {
     public static ClientController _controller = null;
 
     private final Client _model = Client.getClient();
-    private final ClientView view = new ClientView(this._model);
+    private final ClientView clientView = new ClientView(this._model);
+    private final LoginView loginView = new LoginView(this._model);
     private boolean participantsOpen = false;
     private final int originalWidth, originalHeight;
-    private final ButtonHandler buttonHandler = new ButtonHandler(this, this.view);
+    private final ButtonHandler buttonHandler = new ButtonHandler(this, this.clientView);
 
     private ClientController(String title) {
         super(title); //#TODO allow user to change title of their client window
 
         // Setup the frame
-        getContentPane().add(this.view);
-        setSize(this.view.getWidth() + 1, this.view.getHeight() + 1);
+        getContentPane().add(this.loginView);
+        setSize(this.loginView.getWidth() + 1, this.loginView.getHeight() + 1);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Store view sizes for later use
-        this.originalHeight = this.view.getHeight();
-        this.originalWidth = this.view.getWidth();
+        this.originalHeight = this.clientView.getHeight();
+        this.originalWidth = this.clientView.getWidth();
 
         // Add all event handlers below
-        view.getSendBtn().addActionListener(buttonHandler);
-        view.getParticipantsBtn().addActionListener(buttonHandler);
-        view.getProfileBtn().addActionListener(buttonHandler);
-        view.getFileUpload().addActionListener(buttonHandler);
-        view.getDisconnectBtn().addActionListener(buttonHandler);
+        loginView.getLogin().addActionListener(buttonHandler);
+
+        clientView.getSendBtn().addActionListener(buttonHandler);
+        clientView.getParticipantsBtn().addActionListener(buttonHandler);
+        clientView.getProfileBtn().addActionListener(buttonHandler);
+        clientView.getFileUpload().addActionListener(buttonHandler);
+        clientView.getDisconnectBtn().addActionListener(buttonHandler);
 
     }
 
@@ -52,7 +55,7 @@ public class ClientController extends JFrame {
      */
     public void setNewProfileImg(ImageIcon icon) {
         this._model.setProfileImg(icon);
-        this.view.getProfileBtn().setIcon(this._model.getProfileImg());
+        this.clientView.getProfileBtn().setIcon(this._model.getProfileImg());
     }
 
     public void disconnectClient() {
@@ -64,7 +67,7 @@ public class ClientController extends JFrame {
      * Updates the view as required and repaints the client window
      */
     public void updateView() {
-        this.view.update();
+        this.clientView.update();
         this.repaintClient();
     }
 
@@ -73,7 +76,7 @@ public class ClientController extends JFrame {
      */
     private void repaintClient() {
         this.repaint();
-        this.view.repaint();
+        this.clientView.repaint();
     }
 
     /**
@@ -81,7 +84,7 @@ public class ClientController extends JFrame {
      * @param message The received message contained in a Message object
      */
     public void displayMessage(Message message) {
-        this.view.addMessageBlock(message, message.getType());
+        this.clientView.addMessageBlock(message, message.getType());
         this.repaintClient();
     }
 
@@ -95,7 +98,7 @@ public class ClientController extends JFrame {
 
     public static void main(String[] args) {
         JFrame frame = ClientController.getController();
-        Client.getClient().connect();
+//        Client.getClient().connect();
         frame.setVisible(true);
     }
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class ClientView extends JPanel {
 
-    private final Client model;
+    private final Client _model;
 
     // GUI Components below
     private final JTextArea messageArea;
@@ -23,7 +23,7 @@ public class ClientView extends JPanel {
 
     public ClientView(Client model) {
 
-        this.model = model;
+        this._model = model;
 
         // Components will be laid out manually
         setLayout(null);
@@ -68,7 +68,7 @@ public class ClientView extends JPanel {
         messages = new JPanel();
         messages.setLayout(null);
         messages.setBackground(Color.WHITE);
-        messages.setBounds(0, 0 ,535,850);
+        messages.setPreferredSize(new Dimension(535,2000));
         messageWindow = new JScrollPane(messages,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -155,12 +155,13 @@ public class ClientView extends JPanel {
                 LineBorder roundedBorder = new LineBorder(Color.CYAN, 1, true);
                 message.setText("<html>" + msgObj.getMessage() + "</html>");
                 message.setSize(190, this.getContainerHeight("<html>" + msgObj.getMessage() + "</html>", null));
+                message.setLocation(2,2);
                 container.setBorder(BorderFactory.createTitledBorder(roundedBorder,
                         msgObj.getClientName(),
-                        msgObj.getID().equals(this.model.getID()) ? 1 :3, // 0 is for left, 3 is for right
+                        msgObj.getID().equals(this._model.getID()) ? 1 :3, // 0 is for left, 3 is for right
                         TitledBorder.DEFAULT_POSITION));
                 container.setSize(320, message.getHeight());
-                xPos = msgObj.getID().equals(this.model.getID()) ? 5 : this.messages.getWidth() - 325;
+                xPos = msgObj.getID().equals(this._model.getID()) ? 5 : this.messages.getWidth() - 325;
                 break;
             case CONNECT:
             case DISCONNECT:
@@ -182,8 +183,9 @@ public class ClientView extends JPanel {
                 file.setSize(320, this.getContainerHeight(msgObj.getFileName(), null));
                 file.setBorder(new LineBorder(Color.BLACK, 1, true));
                 file.addActionListener(ClientController.getController().getButtonHandler());
+                file.setName("FILE_DOWNLOAD");
                 container.setSize(320, file.getHeight());
-                xPos = msgObj.getID().equals(this.model.getID()) ? 5 : this.messages.getWidth() - 325;
+                xPos = msgObj.getID().equals(this._model.getID()) ? 5 : this.messages.getWidth() - 325;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + type);
@@ -213,7 +215,7 @@ public class ClientView extends JPanel {
      */
     private void setupParticipants() {
         Component[] components = this.participants.getComponents();
-        HashMap<UUID,Object[]> participants = this.model.getParticipants();
+        HashMap<UUID,Object[]> participants = this._model.getParticipants();
         Iterator<Map.Entry<UUID,Object[]>> iterator = participants.entrySet().iterator();
 
         if(components.length > 0) {
@@ -267,6 +269,7 @@ public class ClientView extends JPanel {
     public JPanel getMessages() {return this.messages;}
     public JPanel getParticipants() {return this.participants;}
     public JScrollPane getParticipantsScroll() {return this.participantsScroll;}
+    public JScrollPane getMessageWindow() {return this.messageWindow;}
     public JTextArea getMessageArea() {return this.messageArea;}
     public JFileChooser getFileChooser() {return this.fileChooser;}
     public JButton getProfileBtn() {return this.profileBtn;}

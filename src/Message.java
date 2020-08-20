@@ -45,7 +45,7 @@ public class Message implements Serializable {
                     case "ID": this.ID = UUID.fromString(data);break;
                     case "MESSAGE": this.message = data;break;
                     case "ICON": this.ImageIcon = convertStringToIcon(data);break;
-                    case "DATA": this.data = data.getBytes();
+                    case "DATA": this.data = decodeBase64toByteArray(data);
                     case "FILENAME": this.fileName = data;
 
                 }
@@ -101,7 +101,8 @@ public class Message implements Serializable {
                 type,
                 client.getUserName()
                 ,client.getID()
-                ,data,fileName);
+                ,encodeByteArray(data),
+                fileName);
     }
 
     /**
