@@ -5,7 +5,7 @@ public class LoginView extends JPanel {
     private final Client _model;
 
     private final JTextField username;
-    private final JButton profileImg, login;
+    private final JButton  login;
 
     public LoginView(Client model) {
 
@@ -13,11 +13,10 @@ public class LoginView extends JPanel {
 
         setLayout(null);
 
-        profileImg = new JButton(new ImageIcon("src\\profile.png"));
-        profileImg.setSize(64,64);
-        profileImg.setLocation(111, 50);
-        profileImg.setName("PROFILE_IMAGE");
-        add(profileImg);
+        JLabel info = new JLabel("<html>Username must be a max of 12 characters and may not contain a ','</html>");
+        info.setSize(290,30);
+        info.setLocation(5, 100);
+        add(info);
 
         JLabel usernameLbl = new JLabel("Username: ");
         usernameLbl.setSize(100, 30);
@@ -34,6 +33,7 @@ public class LoginView extends JPanel {
         login = new JButton("Login");
         login.setSize(100,30);
         login.setLocation(100,200);
+        login.setName("LOGIN");
         add(login);
 
 
@@ -41,7 +41,6 @@ public class LoginView extends JPanel {
     }
 
     // Getters and Setters
-    public JButton getProfileImg() {return this.profileImg;}
     public JButton getLogin() {return this.login;}
     public JTextField getUsername() {return this.username;}
 }

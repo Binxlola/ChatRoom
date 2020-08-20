@@ -15,7 +15,7 @@ public class Client extends Thread {
     // User details
     private ImageIcon profileImg = new ImageIcon("src\\user.png");
     private final UUID ID;
-    private String userName = "TESTTEST";
+    private String userName;
 
     private Client() {
         // Local client is always a participant
@@ -97,6 +97,7 @@ public class Client extends Thread {
     public String getUserName() {return this.userName;}
     public ImageIcon getProfileImg() {return this.profileImg;}
     public void setProfileImg(ImageIcon icon) {this.profileImg = icon;}
+    public void setUsername(String name) {this.userName = name;}
     public UUID getID() {return  this.ID;}
     public HashMap<UUID,Object[]> getParticipants() {return this.participants;}
 }

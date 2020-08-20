@@ -7,9 +7,11 @@ public class ClientController extends JFrame {
     private final Client _model = Client.getClient();
     private final ClientView clientView = new ClientView(this._model);
     private final LoginView loginView = new LoginView(this._model);
+
     private boolean participantsOpen = false;
+    private boolean loggedIn = false;
     private final int originalWidth, originalHeight;
-    private final ButtonHandler buttonHandler = new ButtonHandler(this, this.clientView);
+    private final ButtonHandler buttonHandler = new ButtonHandler(this, this.clientView, this.loginView);
 
     private ClientController(String title) {
         super(title); //#TODO allow user to change title of their client window
@@ -58,6 +60,22 @@ public class ClientController extends JFrame {
         this.clientView.getProfileBtn().setIcon(this._model.getProfileImg());
     }
 
+    /**
+     * Set the user name of the client to the given String, if the user is not logged in already
+     * The user will be set to logged in and the view will change to the Client View and window repainted.
+     * @param username The name to be set as the clients username
+     */
+    public void setNewUsername(String username) {
+        this._model.setUsername(username);
+        if (!loggedIn) {
+            this.setContentPane(this.clientView);
+            setSize(this.clientView.getWidth() + 1, this.clientView.getHeight() + 1);
+            this.repaintClient();
+            this._model.connect();
+            this.loggedIn = true;
+        }
+    }
+
     public void disconnectClient() {
         this._model.disconnect();
         this.updateView();
@@ -98,7 +116,6 @@ public class ClientController extends JFrame {
 
     public static void main(String[] args) {
         JFrame frame = ClientController.getController();
-//        Client.getClient().connect();
         frame.setVisible(true);
     }
 }

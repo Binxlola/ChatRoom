@@ -11,11 +11,13 @@ import java.nio.file.Files;
 public class ButtonHandler implements ActionListener {
 
     private final ClientController _controller;
-    private final ClientView VIEW;
+    private final ClientView clientView;
+    private final LoginView loginView;
 
-    public ButtonHandler(ClientController controller, ClientView view) {
+    public ButtonHandler(ClientController controller, ClientView ClientView, LoginView loginView) {
         this._controller = controller;
-        this.VIEW = view;
+        this.clientView = ClientView;
+        this.loginView = loginView;
     }
     
     @Override
@@ -27,6 +29,7 @@ public class ButtonHandler implements ActionListener {
         switch(name) {
             case "SEND": this.send();break;
             case "PROFILE": this.profile();break;
+            case "LOGIN": this.login();break;
             case "PARTICIPANTS": this.participants();break;
             case "FILE_UPLOAD": this.fileUpload();break;
             case "FILE_DOWNLOAD": this.fileDownload(e.getActionCommand(), button.getText());break;
@@ -39,7 +42,7 @@ public class ButtonHandler implements ActionListener {
      * Gets any text that is in the user text input area, will then send the text to all other clients via the server
      */
     private void send() {
-        JTextArea messageArea = this.VIEW.getMessageArea();
+        JTextArea messageArea = this.clientView.getMessageArea();
         String message = messageArea.getText();
         if(!message.equals("")) {
             _controller.getClientListener().sendToServer(Message.createFormattedString(
@@ -49,6 +52,13 @@ public class ButtonHandler implements ActionListener {
             );
             messageArea.setText(null); // Clears our the text area
         }
+    }
+
+    private void login() {
+        String userName = this.loginView.getUsername().getText();
+//        if (userName.length() > 12) {}
+//        if(userName.contains(",")) {}
+        this._controller.setNewUsername(userName);
     }
 
     /**
@@ -122,10 +132,10 @@ public class ButtonHandler implements ActionListener {
      * @return The user selected file
      */
     private File selectFile(boolean open, String fileName) {
-        JFileChooser fileChooser = this.VIEW.getFileChooser();
+        JFileChooser fileChooser = this.clientView.getFileChooser();
         fileChooser.setSelectedFile(new File(fileName));
         File selectedFile = null;
-        int selected = open ? fileChooser.showOpenDialog(this.VIEW) : fileChooser.showSaveDialog(this.VIEW);
+        int selected = open ? fileChooser.showOpenDialog(this.clientView) : fileChooser.showSaveDialog(this.clientView);
 
         if(selected == JFileChooser.APPROVE_OPTION) { selectedFile = fileChooser.getSelectedFile();}
         return selectedFile;
@@ -147,17 +157,17 @@ public class ButtonHandler implements ActionListener {
      * Will open the participants view of the application
      */
     private void openParticipants() {
-        JScrollPane participantsDisplay = this.VIEW.getParticipantsScroll();
+        JScrollPane participantsDisplay = this.clientView.getParticipantsScroll();
 
         // Get required dimensions and compute new dimensions
-        int mainWidth = this.VIEW.getWidth();
-        int mainHeight = this.VIEW.getHeight();
+        int mainWidth = this.clientView.getWidth();
+        int mainHeight = this.clientView.getHeight();
         int secondaryWidth = participantsDisplay.getWidth() + 50;
 
         // expand the main view
-        this.VIEW.setSize((mainWidth + secondaryWidth), mainHeight);
-        this._controller.setSize(this.VIEW.getWidth() + 1, this._controller.getHeight());
-        this.VIEW.add(participantsDisplay);
+        this.clientView.setSize((mainWidth + secondaryWidth), mainHeight);
+        this._controller.setSize(this.clientView.getWidth() + 1, this._controller.getHeight());
+        this.clientView.add(participantsDisplay);
 
         // Tell controller this panel is open
         this._controller.setParticipantsOpen(true);
@@ -170,15 +180,15 @@ public class ButtonHandler implements ActionListener {
      * Will close the participants view of the application
      */
     private void closeParticipants() {
-        JScrollPane participantsDisplay = this.VIEW.getParticipantsScroll();
+        JScrollPane participantsDisplay = this.clientView.getParticipantsScroll();
 
         // Get required dimensions
         int originalWidth = this._controller.getOriginalWidth();
         int originalHeight = this._controller.getOriginalHeight();
 
         // Set back to original size
-        this.VIEW.remove(participantsDisplay);
-        this.VIEW.setSize(originalWidth, originalHeight);
+        this.clientView.remove(participantsDisplay);
+        this.clientView.setSize(originalWidth, originalHeight);
         this._controller.setSize(originalWidth + 1, originalHeight + 1);
 
         // Tell controller this panel is closed
@@ -186,7 +196,7 @@ public class ButtonHandler implements ActionListener {
 
         // Repaint components to display new changes
         this._controller.repaint();
-        this.VIEW.repaint();
+        this.clientView.repaint();
     }
 
     /**
@@ -194,6 +204,6 @@ public class ButtonHandler implements ActionListener {
      */
     private void repaint() {
         this._controller.repaint();
-        this.VIEW.repaint();
+        this.clientView.repaint();
     }
 }

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Chat Room (Basic):jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Chat_Room__Basic__jar</output-path>
+    <root id="archive" name="Chat Room (Basic).jar">
+      <element id="module-output" name="Chat Room (Basic)" />
+    </root>
+  </artifact>
+</component>
