@@ -6,6 +6,11 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * A separate thread that can be used by a server or a client to listen for any communication between clients and or the server
+ *
+ * @author Jason Smit
+ */
 public class Listener extends Thread {
 
     private final Socket SOCKET;
@@ -66,10 +71,6 @@ public class Listener extends Thread {
         }
     }
 
-    public void serveToClient(String message) {
-        this.writer.println(message);
-    }
-
     @Override
     public void run() {
         try {
@@ -85,7 +86,6 @@ public class Listener extends Thread {
                 if(this.SERVER != null) {
                     this.serverHandler(message);
                 } else if(this.CLIENT != null) {
-                    System.out.println(message);
                     this.clientHandler(message);
                 }
             }

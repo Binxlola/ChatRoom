@@ -9,9 +9,15 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * A class that is used to wrap a message that is sent between the server and it's connected clients
+ * handles string formatting to make communication simple.
+ * Also includes functionality for encoding images to string such that they can be sent as a string to the server
+ *
+ * @author Jason Smit
+ */
 public class Message implements Serializable {
 
-    private String status;
     private UUID ID;
     private String clientName;
     private String message;

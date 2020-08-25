@@ -10,7 +10,7 @@ public class Client extends Thread {
     public static final String HOST_NAME = "localhost";
     public static final int HOST_PORT = 7777;
     private Listener listener;
-    private final HashMap<UUID,Object[]> participants = new HashMap<UUID,Object[]>();
+    private final HashMap<UUID,Object[]> participants = new HashMap<>();
 
     // User details
     private ImageIcon profileImg = new ImageIcon("src\\user.png");

@@ -1,5 +1,11 @@
 import javax.swing.*;
 
+/**
+ * A java swing JPanel that is used to represent a simple login window where a client can select a username to be used
+ * in the chat room application
+ *
+ * @author Jason Smit
+ */
 public class LoginView extends JPanel {
 
     private final Client _model;
@@ -12,11 +18,6 @@ public class LoginView extends JPanel {
         this._model = model;
 
         setLayout(null);
-
-        JLabel info = new JLabel("<html>Username must be a max of 12 characters and may not contain a ','</html>");
-        info.setSize(290,30);
-        info.setLocation(5, 100);
-        add(info);
 
         JLabel usernameLbl = new JLabel("Username: ");
         usernameLbl.setSize(100, 30);

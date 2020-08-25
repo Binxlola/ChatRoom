@@ -10,6 +10,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Represents a java swing panel that is used to display the main view of the chat room application to the client
+ * Such as messages, participants and profile details
+ *
+ * @author Jason Smit
+ */
 public class ClientView extends JPanel {
 
     private final Client _model;
@@ -121,6 +127,9 @@ public class ClientView extends JPanel {
         setSize(560, 1000);
     }
 
+    /**
+     * Update an information contained in the model that needs to be displayed in the view by "default"
+     */
     public void update() {
         this.setupParticipants();
     }
@@ -155,12 +164,12 @@ public class ClientView extends JPanel {
                 LineBorder roundedBorder = new LineBorder(Color.CYAN, 1, true);
                 message.setText("<html>" + msgObj.getMessage() + "</html>");
                 message.setSize(190, this.getContainerHeight("<html>" + msgObj.getMessage() + "</html>", null));
-                message.setLocation(2,2);
+                message.setLocation(2,5);
                 container.setBorder(BorderFactory.createTitledBorder(roundedBorder,
                         msgObj.getClientName(),
                         msgObj.getID().equals(this._model.getID()) ? 1 :3, // 0 is for left, 3 is for right
                         TitledBorder.DEFAULT_POSITION));
-                container.setSize(320, message.getHeight());
+                container.setSize(320, message.getHeight() + 10);
                 xPos = msgObj.getID().equals(this._model.getID()) ? 5 : this.messages.getWidth() - 325;
                 break;
             case CONNECT:
@@ -200,14 +209,19 @@ public class ClientView extends JPanel {
 
     }
 
+    /**
+     * Used to find the minimum height of a container based in the height of the text held in the container
+     * @param text The string of text that is to be in the container
+     * @param font The font that is being set to the text inside the container
+     * @return The calculated height of the text
+     */
     private int getContainerHeight(String text, Font font) {
         FontMetrics metrics;
         metrics = getGraphics().getFontMetrics(font != null ? font : UIManager.getDefaults().getFont("Label.font"));
         int width = metrics.stringWidth(text);
         int linesNeeded = width / 300;
-        int height = 30 + (linesNeeded * 30);
 
-        return height;
+        return 30 + (linesNeeded * 30);
     }
 
     /**

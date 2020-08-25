@@ -8,6 +8,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+/**
+ * Used to handle all of the buttons and their functionality with in the entire chat room application
+ *
+ * @author Jason Smit
+ */
 public class ButtonHandler implements ActionListener {
 
     private final ClientController _controller;
@@ -54,10 +59,14 @@ public class ButtonHandler implements ActionListener {
         }
     }
 
+    /**
+     * Check that the given use name meets standards. If not display error message otherwise set the new username
+     */
     private void login() {
         String userName = this.loginView.getUsername().getText();
-//        if (userName.length() > 12) {}
-//        if(userName.contains(",")) {}
+        if (userName.length() > 12 || userName.contains(",")) {
+            JOptionPane.showMessageDialog(this.loginView, "Username must be 12 or less characters and not contain ','");
+        }
         this._controller.setNewUsername(userName);
     }
 
@@ -69,8 +78,6 @@ public class ButtonHandler implements ActionListener {
     private void fileDownload(String fileData, String name) {
         File selectedFile = this.selectFile(false, name);
         byte[] fileBytes = Message.decodeBase64toByteArray(fileData);
-
-        System.out.println(selectedFile.getAbsoluteFile());
 
         try {
             File file = new File(String.valueOf(selectedFile.getAbsoluteFile()));

@@ -1,5 +1,8 @@
 import javax.swing.*;
 
+/**
+ * Used for testing purposes
+ */
 public class ClientServer2 {
 
     public static void main(String[] args) {

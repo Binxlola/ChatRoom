@@ -1,5 +1,11 @@
 import javax.swing.*;
 
+/**
+ * Extends JFrame and represents the overall client side of the chat room application, handles the interactions between
+ * different views and the client model
+ *
+ * @author Jason Smit
+ */
 public class ClientController extends JFrame {
 
     public static ClientController _controller = null;
@@ -76,9 +82,17 @@ public class ClientController extends JFrame {
         }
     }
 
+    /**
+     * Disconnect the client from the server, update the main client view and switch to the login view. Finally switch login
+     * flag to false as client has not logged out
+     */
     public void disconnectClient() {
         this._model.disconnect();
         this.updateView();
+
+        this.setContentPane(this.loginView);
+        this.repaintClient();
+        this.loggedIn = false;
     }
 
     /**
@@ -95,6 +109,7 @@ public class ClientController extends JFrame {
     private void repaintClient() {
         this.repaint();
         this.clientView.repaint();
+        this.loginView.repaint();
     }
 
     /**

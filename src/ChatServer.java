@@ -7,13 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-
+/**
+ * A simple server design to handle connections from clients wanting to message each other and share data
+ */
 public class ChatServer {
 
     public static final int PORT = 7777;
     private boolean stopRequested = false;
-    private final ArrayList<Listener> connections = new ArrayList<Listener>();
-    private HashMap<UUID,Object[]> participants = new HashMap<UUID,Object[]>();
+    private final ArrayList<Listener> connections = new ArrayList<>();
+    private final HashMap<UUID,Object[]> participants = new HashMap<>();
 
     public void startServer() {
         ServerSocket serverSocket = null;
@@ -40,6 +42,12 @@ public class ChatServer {
         }
     }
 
+    /**
+     * Adds a participant to the currently maintained array of connected clients
+     * @param ID The Unique ID of the client being added
+     * @param name The username of the client being added
+     * @param profileImg The the portfolio image of the client being added
+     */
     public void addParticipant(UUID ID, String name, ImageIcon profileImg) {
         Object[] temp = {name,profileImg};
         this.participants.put(ID,temp);
